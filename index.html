@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gr9 Study Hub — History &amp; EMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & TOKENS ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --ink:#1a1612;--ink2:#4a443e;--ink3:#8a8078;
+  --cream:#faf7f2;--cream2:#f0ebe2;--cream3:#e4dcd0;
+  --white:#ffffff;
+  --border:#d8d0c4;--rad:10px;--rad-sm:6px;--rad-lg:14px;
+  /* subject colours */
+  --c1:#b5451b;--c1-bg:#f8ece7;--c1-bd:#e8bfb0;   /* rust / history */
+  --c2:#2a5438;--c2-bg:#e6f0ea;--c2-bd:#a8ccb5;   /* green / EMS */
+  --blue:#1d4e7a;--blue-bg:#e8f0f8;--blue-bd:#b0cde4;
+  --gold:#9a7b2f;--gold-bg:#f5f0de;--gold-bd:#d4bc7a;
+  --green:#2d6b4a;--green-bg:#e4f0ea;--green-bd:#a0cdb5;
+  --danger:#8B1F1F;--dangerl:#fdf0f0;
+  --nav-h:54px;
+}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+button,input,select{font-family:'DM Sans',sans-serif;-webkit-appearance:none;appearance:none}
+button{cursor:pointer;touch-action:manipulation}
+
+/* ── APP SHELL: 2-row sticky header ── */
+.app-shell{position:sticky;top:0;z-index:300;box-shadow:0 2px 12px rgba(0,0,0,.18)}
+
+/* Row 1: logo + subject switcher */
+.app-header{
+  background:var(--ink);padding:0 1rem;
+  display:flex;align-items:center;gap:.6rem;
+  height:48px;
+}
+.app-logo{font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:var(--cream);white-space:nowrap;flex-shrink:0;letter-spacing:-0.01em}
+.app-logo span{color:var(--gold);font-style:italic}
+
+.subj-pills{display:flex;gap:4px;margin-left:auto}
+.subj-pill{
+  padding:5px 14px;border-radius:100px;border:none;
+  font-size:12px;font-weight:600;
+  background:rgba(255,255,255,.1);color:rgba(255,255,255,.5);
+  transition:all .18s;min-height:32px;white-space:nowrap;
+}
+.subj-pill.active-hist{background:var(--c1);color:#fff}
+.subj-pill.active-ems{background:var(--c2);color:#fff}
+
+/* Row 2: page tab bar */
+.page-tabbar{
+  background:var(--ink);
+  display:flex;
+  border-top:1px solid rgba(255,255,255,.1);
+}
+.page-pill{
+  flex:1;padding:0;border:none;
+  font-size:13px;font-weight:500;
+  background:transparent;color:rgba(255,255,255,.5);
+  transition:all .18s;min-height:40px;
+  border-bottom:2.5px solid transparent;
+}
+.page-pill.on{color:#fff;border-bottom-color:var(--gold)}
+
+/* ── SUBJECTS ── */
+.subject{display:none}
+.subject.active{display:block}
+
+/* ── PAGES ── */
+.page{display:none;animation:fadeIn .2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.wrap{max-width:1080px;margin:0 auto;padding:1.25rem 1rem 5rem}
+
+/* ── SHARED HERO ── */
+.page-hero{
+  padding:1.5rem 0 1.25rem;border-bottom:1px solid var(--border);
+  margin-bottom:1.5rem;display:flex;align-items:flex-end;
+  justify-content:space-between;gap:.75rem;flex-wrap:wrap;
+}
+.page-hero h2{font-family:'Playfair Display',serif;font-size:clamp(1.35rem,5vw,2rem);font-weight:700;line-height:1.2}
+.page-hero p{font-size:12px;color:var(--ink3);margin-top:3px}
+.hero-stats{display:flex;gap:1rem}
+.hstat{text-align:right}
+.hstat-n{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--ink);display:block}
+.hstat-l{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3)}
+
+/* ── GLOSSARY CONTROLS (shared) ── */
+.gl-controls{display:flex;flex-direction:column;gap:8px;margin-bottom:.75rem}
+.gl-search{position:relative;width:100%}
+.gl-search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:var(--ink3);fill:none;stroke-width:2;stroke-linecap:round}
+.gl-search input{
+  width:100%;padding:10px 12px 10px 32px;
+  border:1px solid var(--border);border-radius:var(--rad-sm);
+  font-size:16px;background:var(--white);color:var(--ink);outline:none;
+}
+.gl-search input:focus{border-color:var(--c1)}
+.ems-page .gl-search input:focus{border-color:var(--c2)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab{
+  padding:6px 12px;border-radius:100px;border:1px solid var(--border);
+  font-size:12px;font-weight:500;cursor:pointer;
+  background:var(--white);color:var(--ink2);white-space:nowrap;min-height:34px;
+}
+.tab.on{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+
+/* ── PRIORITY / BADGE LEGEND ── */
+.pri-legend{
+  display:flex;flex-direction:column;gap:6px;
+  padding:.75rem;background:var(--white);
+  border:1px solid var(--border);border-radius:var(--rad);
+  margin-bottom:1rem;font-size:12px;color:var(--ink2);
+}
+.leg{display:flex;align-items:flex-start;gap:6px;line-height:1.4}
+.leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.ld-p1{background:var(--c1)}.ld-p2{background:var(--gold)}.ld-key{background:var(--c2)}.ld-exam{background:var(--gold)}
+.pri-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;row-gap:6px}
+.ptab{padding:6px 12px;border-radius:100px;border:1px solid var(--border);font-size:11px;cursor:pointer;background:var(--white);color:var(--ink2);min-height:32px;}
+.ptab.on-all{background:var(--ink);color:#fff;border-color:var(--ink)}
+.ptab.on-p1{background:var(--c1-bg);color:var(--c1);border-color:var(--c1-bd);font-weight:500}
+.ptab.on-p2{background:var(--gold-bg);color:var(--gold);border-color:var(--gold-bd);font-weight:500}
+.ptab.on-key{background:var(--c2-bg);color:var(--c2);border-color:var(--c2-bd);font-weight:500}
+.ptab.on-exam{background:var(--gold-bg);color:var(--gold);border-color:var(--gold-bd);font-weight:500}
+.rcount{font-size:11px;color:var(--ink3);width:100%;padding-top:2px}
+.lang-toggle{display:flex;gap:3px;margin-left:auto;flex-shrink:0}
+.ltab{
+  padding:5px 10px;border-radius:100px;border:1px solid var(--border);
+  font-size:11px;font-weight:500;cursor:pointer;
+  background:var(--white);color:var(--ink2);white-space:nowrap;min-height:30px;
+}
+.ltab.lon{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* ── GLOSSARY CARDS (shared) ── */
+.gl-section{margin-bottom:2rem}
+.sec-hdr{
+  display:flex;flex-wrap:wrap;align-items:baseline;
+  gap:4px 8px;margin-bottom:10px;padding-bottom:8px;
+  border-bottom:2px solid var(--ink);
+}
+.sec-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700}
+.sec-af{font-size:10px;color:var(--ink3);font-style:italic;font-weight:300;flex-basis:100%}
+.sec-count{margin-left:auto;font-size:10px;color:var(--ink3);background:var(--cream2);padding:2px 8px;border-radius:100px;border:1px solid var(--border);flex-shrink:0}
+.term-grid{display:grid;grid-template-columns:1fr;gap:8px}
+.gcard{background:var(--white);border:1px solid var(--border);border-radius:var(--rad);overflow:hidden;cursor:pointer}
+/* history priority borders */
+.gcard.gp1{border-left:3px solid var(--c1)}
+.gcard.gp2{border-left:3px solid var(--gold)}
+/* ems badge borders */
+.gcard.gkey{border-left:3px solid var(--c2)}
+.gcard.gexam{border-left:3px solid var(--gold)}
+.gcard.open{border-color:var(--c1)}
+.ems-page .gcard.open{border-color:var(--c2)}
+.gcard-head{padding:.85rem;display:flex;align-items:flex-start;gap:8px}
+.gcard-terms{flex:1;min-width:0}
+.gcard-af{font-size:14px;font-weight:500;color:var(--ink);line-height:1.3;margin-bottom:2px}
+.gcard-en{font-size:12px;color:var(--blue);line-height:1.3}
+.gcard-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
+.pbadge{font-size:10px;padding:2px 7px;border-radius:100px;font-weight:500;white-space:nowrap;border:1px solid}
+.pb1{background:var(--c1-bg);color:var(--c1);border-color:var(--c1-bd)}
+.pb2{background:var(--gold-bg);color:var(--gold);border-color:var(--gold-bd)}
+.pb3{background:var(--cream2);color:var(--ink3);border-color:var(--border)}
+.pbkey{background:var(--c2-bg);color:var(--c2);border-color:var(--c2-bd)}
+.pbexam{background:var(--gold-bg);color:var(--gold);border-color:var(--gold-bd)}
+.gtoggle{font-size:11px;color:var(--ink3);transition:transform .2s;flex-shrink:0;padding-top:2px}
+.gcard.open .gtoggle{transform:rotate(180deg)}
+.gcard-body{display:none;border-top:1px solid var(--cream3)}
+.gcard.open .gcard-body{display:block}
+.why-row{padding:.6rem .85rem;background:var(--cream2);border-bottom:1px solid var(--cream3);font-size:11px;color:var(--ink2);line-height:1.45}
+.why-row strong{color:var(--ink);font-weight:500}
+.def-row{display:grid;grid-template-columns:1fr}
+.def-col{padding:.7rem .85rem;font-size:12px;line-height:1.55}
+.def-col.af{color:var(--ink2);border-bottom:1px solid var(--cream3)}
+.def-col.en{color:var(--blue);background:var(--blue-bg)}
+.def-lang{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;opacity:.55}
+/* ── LANGUAGE TOGGLE ── */
+.lang-toggle{display:flex;gap:3px;margin-left:auto;flex-shrink:0}
+.ltab{
+  padding:5px 10px;border-radius:100px;border:1px solid var(--border);
+  font-size:11px;font-weight:500;cursor:pointer;
+  background:var(--white);color:var(--ink2);white-space:nowrap;min-height:30px;
+}
+.ltab.lon{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* AF only: hide EN col and EN sub-term on card head */
+body.lang-af .def-col.en{display:none}
+body.lang-af .gcard-en{display:none}
+body.lang-af .def-row{grid-template-columns:1fr!important}
+body.lang-af .def-col.af{border-bottom:none!important}
+
+/* EN only: hide AF col and AF sub-term on card head */
+body.lang-en .def-col.af{display:none}
+body.lang-en .gcard-af{display:none}
+body.lang-en .def-row{grid-template-columns:1fr!important}
+
+/* Bilingual (default): both visible, handled by normal CSS */
+.g-stats{display:flex;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap}
+.g-stat{background:var(--white);border:1px solid var(--border);border-radius:var(--rad-lg);padding:.7rem 1rem;flex:1;min-width:90px;text-align:center}
+.g-stat .n{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--c2);display:block}
+.g-stat .l{font-size:.72rem;color:var(--ink3)}
+
+/* ── QUIZ HOME ── */
+.quiz-home-grid{display:flex;flex-direction:column;gap:1.25rem;margin-top:1.25rem}
+.stats-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.25rem}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rad);padding:.75rem;text-align:center}
+.stat-n{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--ink);display:block}
+.stat-n.amber{color:var(--gold)}.stat-n.blue{color:var(--blue)}.stat-n.grn{color:var(--green)}
+.stat-l{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3)}
+.badges-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--rad);padding:.85rem;margin-bottom:1.25rem}
+.badges-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:7px}
+.badges-row{display:flex;gap:5px;flex-wrap:wrap}
+.bchip{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:4px 9px;border-radius:100px;background:var(--cream2);color:var(--ink3);border:1px solid var(--border)}
+.bchip.earned{background:var(--gold-bg);color:var(--gold);border-color:var(--gold-bd);font-weight:500}
+.modes-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:8px}
+.modes-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.25rem}
+.mcard{background:var(--white);border:1px solid var(--border);border-radius:var(--rad);padding:.85rem;text-align:left;transition:border-color .15s;min-height:44px}
+.mcard.sel{border:2px solid var(--c1);background:var(--c1-bg)}
+.ems-quiz .mcard.sel{border-color:var(--c2);background:var(--c2-bg)}
+.mcard-icon{font-size:18px;margin-bottom:4px}
+.mcard-name{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:1px}
+.mcard.sel .mcard-name{color:var(--c1)}
+.ems-quiz .mcard.sel .mcard-name{color:var(--c2)}
+.mcard-desc{font-size:10px;color:var(--ink3);line-height:1.35}
+.settings-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rad);padding:1rem}
+.settings-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:.85rem}
+.sfield{margin-bottom:.85rem}
+.sfield label{display:block;font-size:11px;font-weight:500;color:var(--ink2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em}
+select{width:100%;padding:10px;border:1px solid var(--border);border-radius:var(--rad-sm);font-size:16px;background:var(--cream);color:var(--ink);outline:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a8078' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+select:focus{border-color:var(--c1)}
+.ems-quiz select:focus{border-color:var(--c2)}
+.start-btn{width:100%;padding:14px;border-radius:var(--rad);border:none;font-family:'Playfair Display',serif;font-size:16px;font-weight:700;background:var(--ink);color:var(--cream);letter-spacing:.02em;margin-top:4px;min-height:50px}
+
+/* ── QUIZ ACTIVE SCREENS ── */
+.qscreen{display:none}
+.qscreen.active{display:block}
+.prog-wrap{background:var(--cream3);border-radius:100px;height:5px;margin-bottom:1.25rem;overflow:hidden}
+.prog-fill{height:100%;background:var(--c1);border-radius:100px;transition:width .35s}
+.ems-quiz .prog-fill{background:var(--c2)}
+.q-meta{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink3);margin-bottom:.65rem}
+.q-score{font-weight:500;color:var(--ink);margin-right:auto}
+.exit-btn{padding:5px 12px;border-radius:100px;border:1px solid var(--border);font-size:12px;background:var(--white);color:var(--ink3);min-height:32px;flex-shrink:0}
+.topic-pill{display:inline-block;font-size:11px;padding:3px 10px;border-radius:100px;background:var(--cream2);color:var(--ink2);border:1px solid var(--border);margin-bottom:.65rem}
+.q-dir{font-size:12px;color:var(--ink3);margin-bottom:4px}
+.q-prompt{font-family:'Playfair Display',serif;font-size:clamp(1.1rem,4vw,1.35rem);font-weight:600;color:var(--ink);line-height:1.4;margin-bottom:1.25rem}
+/* MC */
+.mc-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:1rem}
+.mc-opt{background:var(--white);border:1px solid var(--border);border-radius:var(--rad);padding:.9rem 1rem;text-align:left;font-size:14px;color:var(--ink);line-height:1.4;min-height:48px;width:100%}
+.mc-opt.mc-ok{border:2px solid var(--green);background:var(--green-bg);color:var(--green)}
+.mc-opt.mc-bad{border:2px solid var(--c1);background:var(--c1-bg);color:var(--c1)}
+.mc-opt.mc-show{border:2px solid var(--green);background:var(--green-bg);color:var(--green)}
+.mc-opt:disabled{cursor:default}
+/* FLIP CARD */
+.flip-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rad-lg);padding:2rem 1.25rem;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;margin-bottom:1rem}
+.flip-card:active{border-color:var(--c1)}
+.ems-quiz .flip-card:active{border-color:var(--c2)}
+.flip-front-term{font-family:'Playfair Display',serif;font-size:clamp(1.15rem,4vw,1.4rem);font-weight:700;color:var(--ink);margin-bottom:6px}
+.flip-hint{font-size:12px;color:var(--ink3);margin-top:10px}
+.flip-back{width:100%;text-align:left}
+.flip-lang{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;opacity:.6}
+.flip-lang.af{color:var(--ink3)}.flip-lang.en{color:var(--blue)}
+.flip-def{font-size:13px;line-height:1.55;margin-bottom:10px;color:var(--ink2)}
+.flip-def.en{color:var(--blue)}
+.flip-hr{border:none;border-top:1px solid var(--cream3);margin:8px 0}
+.flip-actions{display:flex;gap:10px;margin-bottom:1.5rem}
+.f-knew{flex:1;padding:13px;border-radius:var(--rad-sm);border:1px solid var(--green-bd);background:var(--green-bg);color:var(--green);font-size:14px;font-weight:500;min-height:48px}
+.f-nope{flex:1;padding:13px;border-radius:var(--rad-sm);border:1px solid var(--c1-bd);background:var(--c1-bg);color:var(--c1);font-size:14px;font-weight:500;min-height:48px}
+/* TYPE */
+.type-input{width:100%;padding:13px;border:1px solid var(--border);border-radius:var(--rad-sm);font-size:16px;background:var(--white);color:var(--ink);outline:none;margin-bottom:10px}
+.type-input:focus{border-color:var(--c1)}
+.ems-quiz .type-input:focus{border-color:var(--c2)}
+.type-input.t-ok{border:2px solid var(--green);background:var(--green-bg);color:var(--green)}
+.type-input.t-bad{border:2px solid var(--c1);background:var(--c1-bg);color:var(--c1)}
+/* MATCH */
+.match-cols{display:grid;grid-template-columns:1fr;gap:0;margin-bottom:1rem}
+.match-col-wrap{margin-bottom:1rem}
+.match-col-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:6px}
+.match-items-row{display:flex;flex-wrap:wrap;gap:6px}
+.match-item{background:var(--white);border:1px solid var(--border);border-radius:var(--rad-sm);padding:.6rem .85rem;font-size:13px;cursor:pointer;line-height:1.35;color:var(--ink)}
+.match-item.msel{border:2px solid var(--c1);background:var(--c1-bg);color:var(--c1)}
+.ems-quiz .match-item.msel{border-color:var(--c2);background:var(--c2-bg);color:var(--c2)}
+.match-item.mok{border:1px solid var(--green-bd);background:var(--green-bg);color:var(--green);cursor:default;pointer-events:none}
+.match-item.mbad{border:1px solid var(--c1-bd);background:var(--c1-bg);color:var(--c1)}
+/* FEEDBACK */
+.fb{border-radius:var(--rad);padding:.85rem;margin-bottom:1rem;font-size:13px;line-height:1.5}
+.fb.ok{background:var(--green-bg);border:1px solid var(--green-bd);color:var(--green)}
+.fb.bad{background:var(--c1-bg);border:1px solid var(--c1-bd);color:var(--c1)}
+.fb-title{font-weight:500;margin-bottom:2px}
+.act-row{display:flex;justify-content:flex-end;gap:8px;align-items:center}
+.btn{padding:10px 18px;border-radius:var(--rad-sm);border:1px solid var(--border);font-size:13px;background:var(--white);color:var(--ink);min-height:44px}
+.btn-primary{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+/* RESULTS */
+.results-hero{text-align:center;padding:1.75rem 0 1.25rem}
+.res-pct{font-family:'Playfair Display',serif;font-size:clamp(3.5rem,15vw,5rem);font-weight:700;color:var(--ink);line-height:1}
+.res-grade{font-size:14px;color:var(--ink2);margin-top:6px;font-weight:300}
+.res-bd{background:var(--white);border:1px solid var(--border);border-radius:var(--rad);padding:.85rem;margin-bottom:1.25rem}
+.res-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid var(--cream3)}
+.res-row:last-child{border-bottom:none}
+.res-row span:first-child{color:var(--ink3)}
+.res-row .rv-green{color:var(--green);font-weight:500}
+.res-row .rv-red{color:var(--c1);font-weight:500}
+.missed-wrap{margin-bottom:1.25rem}
+.missed-lbl{font-size:12px;color:var(--ink3);font-weight:500;margin-bottom:7px}
+.missed-pill{display:inline-block;font-size:12px;padding:3px 10px;border-radius:100px;background:var(--c1-bg);color:var(--c1);border:1px solid var(--c1-bd);margin:3px}
+.res-btns{display:flex;gap:8px}
+.res-btns button{flex:1;min-height:48px}
+
+/* ── GUIDE ── */
+.guide-section{margin-bottom:2rem}
+.guide-section-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--ink);padding-bottom:8px;border-bottom:2px solid var(--ink);margin-bottom:1rem}
+.guide-intro{font-size:13.5px;color:var(--ink2);line-height:1.65;margin-bottom:1.25rem}
+.guide-intro strong{color:var(--ink);font-weight:500}
+.plan-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:.5rem}
+.plan-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rad);padding:.9rem 1rem;display:flex;flex-direction:column;gap:4px}
+.plan-day{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3)}
+.plan-title{font-size:14px;font-weight:500;color:var(--ink)}
+.plan-desc{font-size:12px;color:var(--ink2);line-height:1.5}
+.plan-tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:100px;margin-top:4px;font-weight:500}
+.tag-gl{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd)}
+.tag-q{background:var(--c1-bg);color:var(--c1);border:1px solid var(--c1-bd)}
+.tag-r{background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold-bd)}
+.exam-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:1rem}
+.exam-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rad);padding:.85rem 1rem}
+.exam-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:4px}
+.exam-name{font-size:13.5px;font-weight:500;color:var(--ink);margin-bottom:3px}
+.exam-detail{font-size:12px;color:var(--ink2);line-height:1.5}
+.tip-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.tip-list li{background:var(--white);border:1px solid var(--border);border-radius:var(--rad);padding:.85rem 1rem .85rem 2.25rem;font-size:13px;color:var(--ink2);line-height:1.5;position:relative}
+.tip-list li::before{content:attr(data-n);position:absolute;left:.85rem;top:.85rem;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--c1);line-height:1}
+.tip-list li strong{color:var(--ink);font-weight:500}
+.heat-grid{display:grid;grid-template-columns:1fr;gap:6px;margin-bottom:1rem}
+.heat-row{display:flex;align-items:center;gap:10px;background:var(--white);border:1px solid var(--border);border-radius:var(--rad);padding:.75rem .9rem}
+.heat-bar-wrap{flex:1;background:var(--cream3);border-radius:100px;height:8px;overflow:hidden;min-width:0}
+.heat-bar{height:100%;border-radius:100px}
+.heat-label{font-size:12px;color:var(--ink);font-weight:500;flex-shrink:0;min-width:85px}
+.heat-pct{font-size:11px;color:var(--ink3);flex-shrink:0;min-width:30px;text-align:right}
+.cog-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:1rem}
+.cog-table th{background:var(--ink);color:var(--cream);padding:8px 10px;text-align:left;font-weight:500;font-size:11px}
+.cog-table td{padding:8px 10px;border-bottom:1px solid var(--cream3);color:var(--ink2);vertical-align:top;line-height:1.45}
+.cog-table tr:last-child td{border-bottom:none}
+.cog-table tr:nth-child(even) td{background:var(--cream2)}
+.cog-pct{font-weight:500;color:var(--c1)}
+.alert-box{background:var(--gold-bg);border:1px solid var(--gold-bd);border-radius:var(--rad);padding:.85rem 1rem;font-size:13px;color:var(--ink2);line-height:1.55;margin-bottom:1rem}
+.alert-box strong{color:var(--gold);font-weight:500}
+/* EMS guide phases */
+.guide-phase{background:var(--white);border:1px solid var(--border);border-radius:var(--rad-lg);margin-bottom:1rem;overflow:hidden}
+.guide-phase-header{display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border);background:var(--cream2)}
+.phase-num{width:32px;height:32px;border-radius:50%;background:var(--c2);color:#fff;font-size:.9rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.phase-title{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:2px}
+.phase-sub{font-size:.75rem;color:var(--ink3)}
+.guide-phase-body{padding:1.1rem 1.25rem}
+.guide-phase-body p{font-size:.875rem;line-height:1.65;color:var(--ink2);margin-bottom:.85rem}
+.guide-phase-body ul{padding-left:1.25rem;margin-bottom:.85rem;display:flex;flex-direction:column;gap:.5rem}
+.guide-phase-body li{font-size:.85rem;line-height:1.6;color:var(--ink2)}
+.guide-phase-body strong{font-weight:600;color:var(--c2)}
+.guide-phase-body em{font-style:italic}
+.guide-tip{background:var(--c2-bg);border-left:3px solid var(--c2);border-radius:0 var(--rad) var(--rad) 0;padding:.65rem .9rem;font-size:.82rem;line-height:1.55;color:var(--c2)}
+.tip-label{display:block;font-weight:700;margin-bottom:3px;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}
+.guide-quick{background:var(--white);border:1px solid var(--border);border-radius:var(--rad-lg);padding:1.25rem;margin-bottom:1.5rem}
+.guide-quick-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:var(--c2);margin-bottom:1rem}
+.guide-quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.qr-card{background:var(--cream);border:1px solid var(--border);border-radius:var(--rad);padding:.85rem;text-align:center}
+.qr-icon{font-size:1.4rem;margin-bottom:5px}
+.qr-mode{font-size:.82rem;font-weight:600;color:var(--c2);margin-bottom:4px}
+.qr-use{font-size:.75rem;color:var(--ink3);line-height:1.5}
+
+/* ── RESPONSIVE ── */
+
+/* Topic filter tabs: horizontal scroll on mobile */
+.tabs{
+  display:flex;gap:4px;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  flex-wrap:nowrap;padding-bottom:3px;
+  scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0} /* don't shrink chips */
+
+/* Cog table: make scrollable on mobile */
+.cog-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:1rem}
+.cog-table-wrap .cog-table{margin-bottom:0;min-width:520px}
+
+@media(min-width:480px){
+  .term-grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+  .def-row{grid-template-columns:1fr 1fr}
+  .def-col.af{border-bottom:none;border-right:1px solid var(--cream3)}
+  .mc-grid{grid-template-columns:1fr 1fr}
+  .match-cols{grid-template-columns:1fr 1fr;gap:14px}
+  .match-col-wrap{margin-bottom:0}
+  .match-items-row{flex-direction:column;flex-wrap:nowrap}
+  .pri-legend{flex-direction:row;align-items:center}
+  .leg{align-items:center}.leg-dot{margin-top:0}
+  .gl-controls{flex-direction:row;align-items:center}
+  .gl-search{flex:1;min-width:180px}
+  .sec-af{flex-basis:auto}
+  .plan-grid{grid-template-columns:1fr 1fr}
+  .exam-grid{grid-template-columns:1fr 1fr}
+}
+@media(min-width:640px){
+  .wrap{padding:2rem 1.5rem 5rem}
+  .stats-bar{grid-template-columns:repeat(4,1fr)}
+}
+@media(min-width:780px){
+  .app-header{padding:0 2rem}
+  .app-logo{font-size:1rem}
+  .quiz-home-grid{flex-direction:row;align-items:flex-start}
+  .quiz-home-grid>div:first-child{flex:1}
+  .settings-card{width:280px;flex-shrink:0}
+  .plan-grid{grid-template-columns:repeat(3,1fr)}
+}
+
+/* ── MOBILE-SPECIFIC FIXES ── */
+@media(max-width:479px){
+  /* Stats: 2×2 grid instead of 4 columns */
+  .stats-bar{grid-template-columns:1fr 1fr}
+
+  /* Match items: full-width stacked for bigger tap targets */
+  .match-items-row{flex-direction:column;gap:5px}
+  .match-item{width:100%;text-align:center}
+
+  /* Quiz home modes: 2 column stays but tighter */
+  .mcard{padding:.7rem .75rem}
+
+  /* Wrap padding tighter */
+  .wrap{padding:1rem .85rem 5rem}
+
+  /* Bigger touch target on exit button */
+  .exit-btn{min-height:38px;padding:6px 14px}
+
+  /* Flip card not too tall */
+  .flip-card{padding:1.5rem 1rem;min-height:150px}
+
+  /* Res buttons stack on very small screens */
+  .res-btns{flex-direction:column}
+  .res-btns button{flex:none;width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ APP SHELL ═══ -->
+<div class="app-shell">
+  <header class="app-header">
+    <div class="app-logo">Gr9 <span>Study Hub</span></div>
+    <div class="subj-pills">
+      <button class="subj-pill active-hist" id="sp-hist" onclick="switchSubject('hist')">📜 History</button>
+      <button class="subj-pill" id="sp-ems"  onclick="switchSubject('ems')">💹 EMS</button>
+    </div>
+  </header>
+  <nav class="page-tabbar">
+    <button class="page-pill on"  id="pp-gl"    onclick="goPage('glossary',this)">Woordelys</button>
+    <button class="page-pill"     id="pp-quiz"  onclick="goPage('quiz',this)">Toets</button>
+    <button class="page-pill"     id="pp-guide" onclick="goPage('guide',this)">Gids</button>
+  </nav>
+</div>
+
+<!-- ═══════════════════════════════════
+     HISTORY SUBJECT
+═══════════════════════════════════ -->
+<div class="subject active" id="subj-hist">
+
+  <!-- HISTORY GLOSSARY -->
+  <div id="hist-page-glossary" class="page active">
+  <div class="wrap">
+    <div class="page-hero">
+      <div><h2>Tweetalige Termglos</h2><p>Elke voorgeskrewe term met Afrikaans &amp; Engels definisies, gerangskik volgens eksamengetuienis</p></div>
+      <div class="hero-stats">
+        <div class="hstat"><span class="hstat-n" id="hg-total">0</span><span class="hstat-l">Totaal terme</span></div>
+        <div class="hstat"><span class="hstat-n" style="color:var(--c1)" id="hg-p1">0</span><span class="hstat-l">Moet ken</span></div>
+      </div>
+    </div>
+    <div class="pri-legend">
+      <div class="leg"><div class="leg-dot ld-p1"></div><strong>Moet ken</strong> — direk getoets in eksamenvraestelleell of groot CAPS-fokuspunt</div>
+      <div class="leg"><div class="leg-dot ld-p2"></div><strong>Hoë prioriteit</strong> — in CAPS genoem; gereeld getoets</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--border)"></div><strong>Goed om te weet</strong> — ondersteunende konteks</div>
+    </div>
+    <div class="gl-controls">
+      <div class="gl-search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="hgl-search" placeholder="Soek Afrikaans of Engels…" oninput="hglFilter()">
+      </div>
+      <div class="tabs" id="hgl-tabs">
+        <button class="tab on" onclick="hglTopic('all',this)">All</button>
+        <button class="tab" onclick="hglTopic('t1a',this)">Rise of Nazism</button>
+        <button class="tab" onclick="hglTopic('t1b',this)">WW2 Europe</button>
+        <button class="tab" onclick="hglTopic('t1c',this)">WW2 Pacific</button>
+        <button class="tab" onclick="hglTopic('t2a',this)">Nuclear Age</button>
+        <button class="tab" onclick="hglTopic('t2b',this)">Cold War</button>
+        <button class="tab" onclick="hglTopic('skills',this)">Skills</button>
+      </div>
+    </div>
+    <div class="pri-tabs">
+      <button class="ptab on-all" id="hpt-all" onclick="hglPri('all',this)">Alle prioriteite</button>
+      <button class="ptab" id="hpt-p1" onclick="hglPri('p1',this)">🔴 Moet ken</button>
+      <button class="ptab" id="hpt-p2" onclick="hglPri('p2',this)">🎯 Hoë prioriteit</button>
+      <div class="lang-toggle">
+        <button class="ltab" id="hlt-af" onclick="setLang('af')">AF</button>
+        <button class="ltab lon" id="hlt-bi" onclick="setLang('bi')">AF+EN</button>
+        <button class="ltab" id="hlt-en" onclick="setLang('en')">EN</button>
+      </div>
+      <span class="rcount" id="hgl-count"></span>
+    </div>
+    <div id="hgl-content"></div>
+  </div>
+  </div>
+
+  <!-- HISTORY QUIZ -->
+  <div id="hist-page-quiz" class="page">
+  <div class="wrap">
+
+    <div id="hqhome" class="qscreen active">
+      <div class="page-hero" style="padding-top:1.5rem">
+        <div><h2>Quiz System</h2><p>4 modes · active recall · gamified progress tracking</p></div>
+      </div>
+      <div class="stats-bar">
+        <div class="stat-card"><span class="stat-n" id="hs-sess">0</span><span class="stat-l">Sessies</span></div>
+        <div class="stat-card"><span class="stat-n blue" id="hs-best">—</span><span class="stat-l">Beste telling</span></div>
+        <div class="stat-card"><span class="stat-n amber" id="hs-streak">0</span><span class="stat-l">Dagreeks 🔥</span></div>
+        <div class="stat-card"><span class="stat-n grn" id="hs-mast">0</span><span class="stat-l">Bemeester</span></div>
+      </div>
+      <div class="badges-wrap"><div class="badges-title">Kentekens</div><div class="badges-row" id="h-badges-row"></div></div>
+      <div class="quiz-home-grid">
+        <div>
+          <div class="modes-title">Kies modus</div>
+          <div class="modes-grid">
+            <button class="mcard sel" onclick="hPickMode('mc',this)"><div class="mcard-icon">☑</div><div class="mcard-name">Multiple choice</div><div class="mcard-desc">Kies uit 4 opsies</div></button>
+            <button class="mcard" onclick="hPickMode('flash',this)"><div class="mcard-icon">⟳</div><div class="mcard-name">Flashcards</div><div class="mcard-desc">Draai om te onthul</div></button>
+            <button class="mcard" onclick="hPickMode('type',this)"><div class="mcard-icon">✎</div><div class="mcard-name">Fill in the blank</div><div class="mcard-desc">Tik die antwoord</div></button>
+            <button class="mcard" onclick="hPickMode('match',this)"><div class="mcard-icon">⇔</div><div class="mcard-name">Match columns</div><div class="mcard-desc">AF ⇄ Engels</div></button>
+          </div>
+        </div>
+        <div class="settings-card">
+          <div class="settings-title">Sessie-instellings</div>
+          <div class="sfield"><label>Onderwerp</label>
+            <select id="hq-topic">
+              <option value="all">Alle terme (gemeng)</option>
+              <option value="p1">Moet ken alleenlik 🔴</option>
+              <option value="p12">Moet ken + Hoë prioriteit</option>
+              <option value="t1a">Term 1: Rise of Nazism</option>
+              <option value="t1b">Term 1: WW2 Europe</option>
+              <option value="t1c">Term 1: WW2 Pacific</option>
+              <option value="t2a">Term 2: Nuclear Age</option>
+              <option value="t2b">Term 2: Cold War</option>
+              <option value="skills">Geskiedenisvaardighede</option>
+              <option value="wrong">Fokus op gemiste terme</option>
+            </select>
+          </div>
+          <div class="sfield"><label>Rigting</label>
+            <select id="hq-dir">
+              <option value="mix">Gemeng alles</option>
+              <option value="af-en">Afrikaans → Engels</option>
+              <option value="en-af">Engels → Afrikaans</option>
+              <option value="def-af">Definisie → term (AF)</option>
+              <option value="def-en">Definition → term (EN)</option>
+            </select>
+          </div>
+          <div class="sfield"><label>Vrae</label>
+            <select id="hq-count">
+              <option value="5">5 questions</option>
+              <option value="10" selected>10 questions</option>
+              <option value="15">15 questions</option>
+              <option value="20">20 questions</option>
+              <option value="999">All available</option>
+            </select>
+          </div>
+          <button class="start-btn" onclick="hStartQuiz()">Begin sessie →</button>
+        </div>
+      </div>
+    </div><!-- /hqhome -->
+
+    <div id="hqmc" class="qscreen">
+      <div class="prog-wrap"><div class="prog-fill" id="hmc-prog"></div></div>
+      <div class="q-meta"><span id="hmc-num"></span><span class="q-score" id="hmc-sc"></span><button class="exit-btn" onclick="hGoHome()">✕ Verlaat</button></div>
+      <div class="topic-pill" id="hmc-pill"></div>
+      <div class="q-dir" id="hmc-dir"></div>
+      <div class="q-prompt" id="hmc-prompt"></div>
+      <div class="mc-grid" id="hmc-opts"></div>
+      <div id="hmc-fb"></div>
+      <div class="act-row"><button class="btn btn-primary" id="hmc-next" onclick="hNextQ('mc')" style="display:none">Volgende →</button></div>
+    </div>
+
+    <div id="hqflash" class="qscreen">
+      <div class="prog-wrap"><div class="prog-fill" id="hfl-prog"></div></div>
+      <div class="q-meta"><span id="hfl-num"></span><span class="q-score" id="hfl-sc"></span><button class="exit-btn" onclick="hGoHome()">✕ Verlaat</button></div>
+      <div class="topic-pill" id="hfl-pill"></div>
+      <div class="flip-card" id="h-flip-card" onclick="hDoFlip()">
+        <div id="h-flip-front">
+          <div class="q-dir" id="hfl-dir" style="font-size:11px;color:var(--ink3);margin-bottom:6px"></div>
+          <div class="flip-front-term" id="hfl-prompt"></div>
+          <div class="flip-hint">Tik om te onthul</div>
+        </div>
+        <div id="h-flip-back" style="display:none" class="flip-back">
+          <div class="flip-lang af">Afrikaans</div><div class="flip-def" id="hfl-af"></div>
+          <hr class="flip-hr">
+          <div class="flip-lang en">Engels</div><div class="flip-def en" id="hfl-en"></div>
+        </div>
+      </div>
+      <div class="flip-actions" id="h-flip-acts" style="display:none">
+        <button class="f-nope" onclick="hFlashRate(false)">✗ Het nie geweet nie</button>
+        <button class="f-knew" onclick="hFlashRate(true)">✓ Het geweet!</button>
+      </div>
+    </div>
+
+    <div id="hqtype" class="qscreen">
+      <div class="prog-wrap"><div class="prog-fill" id="hty-prog"></div></div>
+      <div class="q-meta"><span id="hty-num"></span><span class="q-score" id="hty-sc"></span><button class="exit-btn" onclick="hGoHome()">✕ Verlaat</button></div>
+      <div class="topic-pill" id="hty-pill"></div>
+      <div class="q-dir" id="hty-dir"></div>
+      <div class="q-prompt" id="hty-prompt"></div>
+      <input class="type-input" id="h-type-inp" placeholder="Tik jou antwoord…" onkeydown="if(event.key==='Enter')hSubmitType()">
+      <div class="act-row" style="margin-bottom:1rem">
+        <button class="btn" id="hty-check" onclick="hSubmitType()">Gaan na</button>
+        <button class="btn btn-primary" id="hty-next" onclick="hNextQ('type')" style="display:none">Volgende →</button>
+      </div>
+      <div id="hty-fb"></div>
+    </div>
+
+    <div id="hqmatch" class="qscreen">
+      <div class="prog-wrap"><div class="prog-fill" id="hma-prog" style="width:0%"></div></div>
+      <div class="q-meta"><span id="hma-num"></span><span class="q-score" id="hma-sc"></span><button class="exit-btn" onclick="hGoHome()">✕ Verlaat</button></div>
+      <p style="font-size:13px;color:var(--ink3);margin-bottom:1rem">Kies een uit elke kolom om te koppel.</p>
+      <div class="match-cols">
+        <div class="match-col-wrap"><div class="match-col-label">Afrikaans</div><div class="match-items-row" id="hma-left"></div></div>
+        <div class="match-col-wrap"><div class="match-col-label">Engels</div><div class="match-items-row" id="hma-right"></div></div>
+      </div>
+      <div class="act-row"><button class="btn btn-primary" id="hma-next" onclick="hNextMatchRound()" style="display:none">Volgende rondte →</button></div>
+      <div id="hma-fb" style="margin-top:.75rem"></div>
+    </div>
+
+    <div id="hqresults" class="qscreen">
+      <div class="results-hero"><div class="res-pct" id="hres-pct"></div><div class="res-grade" id="hres-grade"></div></div>
+      <div class="res-bd" id="hres-bd"></div>
+      <div class="missed-wrap" id="hres-missed"></div>
+      <div id="hres-newbadges" style="margin-bottom:1.5rem"></div>
+      <div class="res-btns">
+        <button class="btn" onclick="hRetryMissed()">↩ Herhaal gemiste</button>
+        <button class="btn btn-primary" onclick="hGoHome()">⌂ Tuis</button>
+      </div>
+    </div>
+
+  </div>
+  </div><!-- /hist-page-quiz -->
+
+  <!-- HISTORY GUIDE -->
+  <div id="hist-page-guide" class="page">
+  <div class="wrap">
+    <div class="page-hero">
+      <div><h2>Study Guide</h2><p>How to use this tool for maximum exam impact — based on CAPS and past papers</p></div>
+    </div>
+    <div class="guide-section">
+      <div class="guide-section-title">How your history exam is structured</div>
+      <div class="guide-intro">The 2023 national exemplar is <strong>75 marks over 120 minutes</strong> (plus 15 min reading time). Every exam has the same three sections.</div>
+      <div class="exam-grid">
+        <div class="exam-card"><div class="exam-label">Section 1 — Multiple choice</div><div class="exam-name">~30 marks · 1 mark each</div><div class="exam-detail">Source-based multiple choice. Tests recall and reading comprehension. <strong>Must-know terms dominate this section.</strong></div></div>
+        <div class="exam-card"><div class="exam-label">Section 2 — Source analysis</div><div class="exam-name">~25 marks · 2–4 marks per question</div><div class="exam-detail">Analyse 3–4 sources. Common tasks: explain, describe, identify bias, compare. <strong>Exam instruction words are critical here.</strong></div></div>
+        <div class="exam-card"><div class="exam-label">Section 3 — Extended writing</div><div class="exam-name">~20 marks · 8–10 marks per essay</div><div class="exam-detail">Structured paragraph or short essay. Marked on facts (6 points), intro sentence, conclusion sentence. <strong>High-priority terms are the facts examiners look for.</strong></div></div>
+      </div>
+    </div>
+    <div class="guide-section">
+      <div class="guide-section-title">What cognitive level are questions testing?</div>
+      <div class="guide-intro">CAPS requires every exam to be weighted across three cognitive levels.</div>
+      <div class="cog-table-wrap"><table class="cog-table">
+        <tr><th>Level</th><th>CAPS weighting</th><th>What it looks like</th><th>Mode to practise</th></tr>
+        <tr><td><strong>Low order</strong><br><em>Knowledge &amp; recall</em></td><td><span class="cog-pct">30%</span></td><td>Define, identify, name, match, state.</td><td>Flashcards &amp; Match</td></tr>
+        <tr><td><strong>Middle order</strong><br><em>Comprehension</em></td><td><span class="cog-pct">50%</span></td><td>Explain, describe, compare, use source + own knowledge.</td><td>Multiple choice &amp; Fill in blank</td></tr>
+        <tr><td><strong>High order</strong><br><em>Analysis &amp; evaluation</em></td><td><span class="cog-pct">20%</span></td><td>Evaluate, justify, detect bias, assess significance.</td><td>Fill in blank (definition direction)</td></tr>
+      </table></div>
+      <div class="alert-box"><strong>Key insight:</strong> 50% of marks come from middle-order questions. Knowing the definition is not enough — you need to use a term in a sentence with reasons.</div>
+    </div>
+    <div class="guide-section">
+      <div class="guide-section-title">Where exam marks come from by topic</div>
+      <div class="heat-grid">
+        <div class="heat-row"><div class="heat-label">Rise of Nazism</div><div class="heat-bar-wrap"><div class="heat-bar" style="width:92%;background:var(--c1)"></div></div><div class="heat-pct">5 hrs</div></div>
+        <div class="heat-row"><div class="heat-label">WW2 Europe</div><div class="heat-bar-wrap"><div class="heat-bar" style="width:92%;background:var(--c1)"></div></div><div class="heat-pct">5 hrs</div></div>
+        <div class="heat-row"><div class="heat-label">Cold War</div><div class="heat-bar-wrap"><div class="heat-bar" style="width:75%;background:#c8611c"></div></div><div class="heat-pct">6 hrs</div></div>
+        <div class="heat-row"><div class="heat-label">Nuclear Age</div><div class="heat-bar-wrap"><div class="heat-bar" style="width:55%;background:var(--gold)"></div></div><div class="heat-pct">4 hrs</div></div>
+        <div class="heat-row"><div class="heat-label">History Skills</div><div class="heat-bar-wrap"><div class="heat-bar" style="width:55%;background:var(--gold)"></div></div><div class="heat-pct">Every Q</div></div>
+        <div class="heat-row"><div class="heat-label">WW2 Pacific</div><div class="heat-bar-wrap"><div class="heat-bar" style="width:28%;background:var(--green)"></div></div><div class="heat-pct">2 hrs</div></div>
+      </div>
+      <div class="alert-box"><strong>Important:</strong> History Skills earn marks in every single question. If you misread an instruction word, you answer the wrong question type.</div>
+    </div>
+    <div class="guide-section">
+      <div class="guide-section-title">Recommended daily study routine</div>
+      <div class="guide-intro"><strong>Short, daily sessions beat long cramming sessions.</strong> This plan uses spaced repetition principles — 15–20 minutes per day.</div>
+      <div class="plan-grid">
+        <div class="plan-card"><div class="plan-day">Day 1 — Monday</div><div class="plan-title">Glossary: one topic</div><div class="plan-desc">Filter by one topic. Open every card. Read English, cover it, read Afrikaans. Focus on Must-know cards first.</div><span class="plan-tag tag-gl">Glossary tab</span></div>
+        <div class="plan-card"><div class="plan-day">Day 2 — Tuesday</div><div class="plan-title">Flashcards: same topic</div><div class="plan-desc">Quiz → Flashcards → same topic → EN→AF direction → 10 cards. Rate yourself honestly.</div><span class="plan-tag tag-q">Quiz tab</span></div>
+        <div class="plan-card"><div class="plan-day">Day 3 — Wednesday</div><div class="plan-title">Multiple choice: same topic</div><div class="plan-desc">Quiz → Multiple choice → same topic → Mix all directions → 10 questions. This simulates the exam format.</div><span class="plan-tag tag-q">Quiz tab</span></div>
+        <div class="plan-card"><div class="plan-day">Day 4 — Thursday</div><div class="plan-title">Fill in blank: missed terms</div><div class="plan-desc">Quiz → Fill in blank → "Focus on missed terms" → AF→EN direction. Typing forces deeper recall.</div><span class="plan-tag tag-q">Quiz tab</span></div>
+        <div class="plan-card"><div class="plan-day">Day 5 — Friday</div><div class="plan-title">Match columns: review</div><div class="plan-desc">Quiz → Match columns → All terms → 3 rounds. Tests pattern recognition across topics.</div><span class="plan-tag tag-q">Quiz tab</span></div>
+        <div class="plan-card"><div class="plan-day">Day 6 — Saturday</div><div class="plan-title">New topic + Must-know blitz</div><div class="plan-desc">Read the next topic in Glossary, then do a Must-know only quiz (all modes, 15 questions).</div><span class="plan-tag tag-gl">Glossary</span> <span class="plan-tag tag-q" style="margin-left:4px">Quiz</span></div>
+      </div>
+      <div class="alert-box" style="margin-top:1rem"><strong>Before a test:</strong> Do one full session of Must-know only across all topics, AF→EN direction, Fill in blank mode.</div>
+    </div>
+    <div class="guide-section">
+      <div class="guide-section-title">Top tips for Afrikaans history exams</div>
+      <ul class="tip-list">
+        <li data-n="1"><strong>Read the instruction word first.</strong> In Afrikaans exams the instruction word tells you exactly what kind of answer is expected. Get it wrong and you lose marks even if you know the content.</li>
+        <li data-n="2"><strong>"Gebruik Bron A en u eie kennis" means you MUST use both.</strong> If you only quote the source, you get half marks. Always quote something specific from the source AND add a fact not in the source.</li>
+        <li data-n="3"><strong>For "verduidelik" questions, use the three-part structure:</strong> (1) State WHAT happened. (2) Explain WHY. (3) State WHAT the result was.</li>
+        <li data-n="4"><strong>For the essay question, the marking memo rewards structure.</strong> You get marks for an opening sentence, 6 factual points, and a concluding sentence.</li>
+        <li data-n="5"><strong>Bias questions always follow the same pattern.</strong> State that the source IS biased. Quote the specific word or phrase. Explain WHO wrote it and WHY that makes it one-sided.</li>
+        <li data-n="6"><strong>Use the 15-minute reading time.</strong> Underline terms you recognise, circle instruction words, and mark which questions you will answer first.</li>
+        <li data-n="7"><strong>The Must-know filter in the Quiz is your exam simulator.</strong> If you can answer every Must-know term correctly in Fill in blank mode, you are ready for the exam.</li>
+      </ul>
+    </div>
+  </div>
+  </div><!-- /hist-page-guide -->
+
+</div><!-- /subj-hist -->
+
+
+<!-- ═══════════════════════════════════
+     EMS SUBJECT
+═══════════════════════════════════ -->
+<div class="subject ems-page" id="subj-ems">
+
+  <!-- EMS GLOSSARY -->
+  <div id="ems-page-glossary" class="page active">
+  <div class="wrap">
+    <div class="page-hero">
+      <div><h2>Tweetalige Termglos</h2><p>96 EMS-terme met Afrikaans &amp; Engels definisies — Kwartale 1 &amp; 2</p></div>
+      <div class="hero-stats">
+        <div class="hstat"><span class="hstat-n" id="eg-total" style="color:var(--c2)">0</span><span class="hstat-l">Totaal terme</span></div>
+        <div class="hstat"><span class="hstat-n" id="eg-key" style="color:var(--c2)">0</span><span class="hstat-l">★ Moet ken</span></div>
+      </div>
+    </div>
+    <div class="pri-legend">
+      <div class="leg"><div class="leg-dot ld-key"></div><strong>★ Moet ken</strong> — hoogste eksamenfrekwensie; bemeester hierdie eerste</div>
+      <div class="leg"><div class="leg-dot ld-exam"></div><strong>Eksamensterm</strong> — verskyn in eksamenvraestelleell; ken die definisie</div>
+    </div>
+    <div class="gl-controls">
+      <div class="gl-search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="egl-search" placeholder="Soek Afrikaans of Engels…" oninput="eglFilter()">
+      </div>
+      <div class="tabs" id="egl-tabs">
+        <button class="tab on" onclick="eglTopic('all',this)">All</button>
+        <button class="tab" onclick="eglTopic('Economic Systems',this)">Economic Systems</button>
+        <button class="tab" onclick="eglTopic('Circular Flow',this)">Circular Flow</button>
+        <button class="tab" onclick="eglTopic('Journals & GL',this)">Journals &amp; GL</button>
+        <button class="tab" onclick="eglTopic('Credit Transactions',this)">Credit Transactions</button>
+        <button class="tab" onclick="eglTopic('Price Theory',this)">Price Theory</button>
+        <button class="tab" onclick="eglTopic('Sectors',this)">Sectors</button>
+        <button class="tab" onclick="eglTopic('Exam Language',this)">Exam Language</button>
+      </div>
+    </div>
+    <div class="pri-tabs">
+      <button class="ptab on-all" id="ept-all" onclick="eglPri('all',this)">Alle terme</button>
+      <button class="ptab" id="ept-key"  onclick="eglPri('key',this)">★ Moet ken</button>
+      <button class="ptab" id="ept-exam" onclick="eglPri('exam',this)">📋 Eksamenterme</button>
+      <div class="lang-toggle">
+        <button class="ltab" id="elt-af" onclick="setLang('af')">AF</button>
+        <button class="ltab lon" id="elt-bi" onclick="setLang('bi')">AF+EN</button>
+        <button class="ltab" id="elt-en" onclick="setLang('en')">EN</button>
+      </div>
+      <span class="rcount" id="egl-count"></span>
+    </div>
+    <div id="egl-content"></div>
+  </div>
+  </div><!-- /ems-page-glossary -->
+
+  <!-- EMS QUIZ -->
+  <div id="ems-page-quiz" class="page ems-quiz">
+  <div class="wrap">
+
+    <div id="eqhome" class="qscreen active">
+      <div class="page-hero" style="padding-top:1.5rem">
+        <div><h2>Quiz System</h2><p>4 modes · active recall · gamified progress tracking</p></div>
+      </div>
+      <div class="stats-bar">
+        <div class="stat-card"><span class="stat-n" id="es-sess">0</span><span class="stat-l">Sessies</span></div>
+        <div class="stat-card"><span class="stat-n blue" id="es-best">—</span><span class="stat-l">Beste telling</span></div>
+        <div class="stat-card"><span class="stat-n amber" id="es-streak">0</span><span class="stat-l">Dagreeks 🔥</span></div>
+        <div class="stat-card"><span class="stat-n grn" id="es-mast">0</span><span class="stat-l">Bemeester</span></div>
+      </div>
+      <div class="badges-wrap"><div class="badges-title">Kentekens</div><div class="badges-row" id="e-badges-row"></div></div>
+      <div class="quiz-home-grid">
+        <div>
+          <div class="modes-title">Kies modus</div>
+          <div class="modes-grid ems-quiz">
+            <button class="mcard sel" onclick="ePickMode('mc',this)"><div class="mcard-icon">☑</div><div class="mcard-name">Multiple choice</div><div class="mcard-desc">Kies uit 4 opsies</div></button>
+            <button class="mcard" onclick="ePickMode('flash',this)"><div class="mcard-icon">🃏</div><div class="mcard-name">Flashcards</div><div class="mcard-desc">Draai om te onthul</div></button>
+            <button class="mcard" onclick="ePickMode('type',this)"><div class="mcard-icon">✏️</div><div class="mcard-name">Fill in the blank</div><div class="mcard-desc">Tik die antwoord</div></button>
+            <button class="mcard" onclick="ePickMode('match',this)"><div class="mcard-icon">🔗</div><div class="mcard-name">Match columns</div><div class="mcard-desc">AF ⇄ Engels</div></button>
+          </div>
+        </div>
+        <div class="settings-card">
+          <div class="settings-title">Sessie-instellings</div>
+          <div class="sfield"><label>Onderwerp</label>
+            <select id="eq-topic">
+              <option value="all">Alle terme (gemeng)</option>
+              <option value="key">★ Moet ken alleenlik</option>
+              <option value="Economic Systems">Economic Systems</option>
+              <option value="Circular Flow">Circular Flow</option>
+              <option value="Journals & GL">Journals &amp; GL</option>
+              <option value="Credit Transactions">Credit Transactions</option>
+              <option value="Price Theory">Price Theory</option>
+              <option value="Sectors">Sectors</option>
+              <option value="Exam Language">Exam Language</option>
+              <option value="wrong">Fokus op gemiste terme</option>
+            </select>
+          </div>
+          <div class="sfield"><label>Rigting</label>
+            <select id="eq-dir">
+              <option value="mix">Gemeng alles</option>
+              <option value="af-en">Afrikaans → Engels</option>
+              <option value="en-af">Engels → Afrikaans</option>
+              <option value="def-af">Definisie → term (AF)</option>
+              <option value="def-en">Definition → term (EN)</option>
+            </select>
+          </div>
+          <div class="sfield"><label>Vrae</label>
+            <select id="eq-count">
+              <option value="5">5 questions</option>
+              <option value="10" selected>10 questions</option>
+              <option value="15">15 questions</option>
+              <option value="20">20 questions</option>
+              <option value="999">All available</option>
+            </select>
+          </div>
+          <button class="start-btn" onclick="eStartQuiz()">Begin sessie →</button>
+        </div>
+      </div>
+    </div><!-- /eqhome -->
+
+    <div id="eqmc" class="qscreen ems-quiz">
+      <div class="prog-wrap"><div class="prog-fill" id="emc-prog"></div></div>
+      <div class="q-meta"><span id="emc-num"></span><span class="q-score" id="emc-sc"></span><button class="exit-btn" onclick="eGoHome()">✕ Verlaat</button></div>
+      <div class="topic-pill" id="emc-pill"></div>
+      <div class="q-dir" id="emc-dir"></div>
+      <div class="q-prompt" id="emc-prompt"></div>
+      <div class="mc-grid" id="emc-opts"></div>
+      <div id="emc-fb"></div>
+      <div class="act-row"><button class="btn btn-primary" id="emc-next" onclick="eNextQ('mc')" style="display:none">Volgende →</button></div>
+    </div>
+
+    <div id="eqflash" class="qscreen ems-quiz">
+      <div class="prog-wrap"><div class="prog-fill" id="efl-prog"></div></div>
+      <div class="q-meta"><span id="efl-num"></span><span class="q-score" id="efl-sc"></span><button class="exit-btn" onclick="eGoHome()">✕ Verlaat</button></div>
+      <div class="topic-pill" id="efl-pill"></div>
+      <div class="flip-card ems-quiz" id="e-flip-card" onclick="eDoFlip()">
+        <div id="e-flip-front">
+          <div class="q-dir" id="efl-dir" style="font-size:11px;color:var(--ink3);margin-bottom:6px"></div>
+          <div class="flip-front-term" id="efl-prompt"></div>
+          <div class="flip-hint">Tik om te onthul</div>
+        </div>
+        <div id="e-flip-back" style="display:none" class="flip-back">
+          <div class="flip-lang af">Afrikaans</div><div class="flip-def" id="efl-af"></div>
+          <hr class="flip-hr">
+          <div class="flip-lang en">Engels</div><div class="flip-def en" id="efl-en"></div>
+        </div>
+      </div>
+      <div class="flip-actions" id="e-flip-acts" style="display:none">
+        <button class="f-nope" onclick="eFlashRate(false)">✗ Het nie geweet nie</button>
+        <button class="f-knew" onclick="eFlashRate(true)">✓ Het geweet!</button>
+      </div>
+    </div>
+
+    <div id="eqtype" class="qscreen ems-quiz">
+      <div class="prog-wrap"><div class="prog-fill" id="ety-prog"></div></div>
+      <div class="q-meta"><span id="ety-num"></span><span class="q-score" id="ety-sc"></span><button class="exit-btn" onclick="eGoHome()">✕ Verlaat</button></div>
+      <div class="topic-pill" id="ety-pill"></div>
+      <div class="q-dir" id="ety-dir"></div>
+      <div class="q-prompt" id="ety-prompt"></div>
+      <input class="type-input ems-quiz" id="e-type-inp" placeholder="Tik jou antwoord…" onkeydown="if(event.key==='Enter')eSubmitType()">
+      <div class="act-row" style="margin-bottom:1rem">
+        <button class="btn" id="ety-check" onclick="eSubmitType()">Gaan na</button>
+        <button class="btn btn-primary" id="ety-next" onclick="eNextQ('type')" style="display:none">Volgende →</button>
+      </div>
+      <div id="ety-fb"></div>
+    </div>
+
+    <div id="eqmatch" class="qscreen ems-quiz">
+      <div class="prog-wrap"><div class="prog-fill" id="ema-prog" style="width:0%"></div></div>
+      <div class="q-meta"><span id="ema-num"></span><span class="q-score" id="ema-sc"></span><button class="exit-btn" onclick="eGoHome()">✕ Verlaat</button></div>
+      <p style="font-size:13px;color:var(--ink3);margin-bottom:1rem">Kies een uit elke kolom om te koppel.</p>
+      <div class="match-cols">
+        <div class="match-col-wrap"><div class="match-col-label">Afrikaans</div><div class="match-items-row" id="ema-left"></div></div>
+        <div class="match-col-wrap"><div class="match-col-label">Engels</div><div class="match-items-row" id="ema-right"></div></div>
+      </div>
+      <div class="act-row"><button class="btn btn-primary" id="ema-next" onclick="eNextMatchRound()" style="display:none">Volgende rondte →</button></div>
+      <div id="ema-fb" style="margin-top:.75rem"></div>
+    </div>
+
+    <div id="eqresults" class="qscreen">
+      <div class="results-hero"><div class="res-pct" id="eres-pct"></div><div class="res-grade" id="eres-grade"></div></div>
+      <div class="res-bd" id="eres-bd"></div>
+      <div class="missed-wrap" id="eres-missed"></div>
+      <div id="eres-newbadges" style="margin-bottom:1.5rem"></div>
+      <div class="res-btns">
+        <button class="btn" onclick="eRetryMissed()">↩ Herhaal gemiste</button>
+        <button class="btn btn-primary" onclick="eGoHome()">⌂ Tuis</button>
+      </div>
+    </div>
+
+  </div>
+  </div><!-- /ems-page-quiz -->
+
+  <!-- EMS GUIDE -->
+  <div id="ems-page-guide" class="page">
+  <div class="wrap">
+    <div class="page-hero">
+      <div><h2>How to Study EMS</h2><p>A step-by-step study plan proven to get every term cold — in both languages</p></div>
+    </div>
+    <div class="guide-phase">
+      <div class="guide-phase-header"><span class="phase-num">1</span><div><div class="phase-title">Read first, quiz second</div><div class="phase-sub">Do this before your first quiz session</div></div></div>
+      <div class="guide-phase-body">
+        <p>Open the <strong>Glossary tab</strong> and work through one topic at a time. For each card read the English and Afrikaans terms out loud, then click to open and read both definitions.</p>
+        <ul>
+          <li>Pay extra attention to <strong>★ Must-know</strong> cards — these appear in almost every exam.</li>
+          <li>For <strong>Exam Language</strong>, actively memorise what each instruction word requires. Misreading <em>verduidelik</em> as <em>noem</em> costs you marks.</li>
+        </ul>
+        <div class="guide-tip"><span class="tip-label">💡 Tip</span>Start with the topic your next test covers. Use the filter chips to focus on just that section.</div>
+      </div>
+    </div>
+    <div class="guide-phase">
+      <div class="guide-phase-header"><span class="phase-num">2</span><div><div class="phase-title">Build recognition with Flashcards</div><div class="phase-sub">Low pressure, high exposure</div></div></div>
+      <div class="guide-phase-body">
+        <p>Switch to the <strong>Quiz tab</strong>, select <strong>Flashcards</strong>, and run through all terms for your topic. The goal is exposure, not scoring.</p>
+        <ul>
+          <li>Be <em>honest</em> when rating yourself. If you hesitated, tap <strong>Didn't know</strong>.</li>
+          <li>Set direction to <strong>English → Afrikaans</strong> first, then repeat with <strong>Afrikaans → English</strong>.</li>
+        </ul>
+        <div class="guide-tip"><span class="tip-label">💡 Tip</span>A term is only <strong>mastered</strong> after 3 correct answers across sessions. That's your real progress number.</div>
+      </div>
+    </div>
+    <div class="guide-phase">
+      <div class="guide-phase-header"><span class="phase-num">3</span><div><div class="phase-title">Test with Multiple Choice</div><div class="phase-sub">Simulates real exam conditions</div></div></div>
+      <div class="guide-phase-body">
+        <p>Multiple choice is closest to how Section A of your paper is structured. Use Mixed direction since the exam won't tell you which way the question will come from.</p>
+        <div class="guide-tip"><span class="tip-label">💡 Tip</span>After a session, review the terms marked ✗. Those are your priority for the next session.</div>
+      </div>
+    </div>
+    <div class="guide-phase">
+      <div class="guide-phase-header"><span class="phase-num">4</span><div><div class="phase-title">Cement it with Fill in the Blank</div><div class="phase-sub">Use this when you feel confident</div></div></div>
+      <div class="guide-phase-body">
+        <p>Fill in the blank forces active recall — you produce the answer from memory. Set direction to <strong>Definition → Term</strong> to mirror "Name the term…" exam questions.</p>
+        <div class="guide-tip"><span class="tip-label">💡 Tip</span>If you can pass Fill in the Blank at 80%+ with Mixed directions, you are exam-ready for that topic.</div>
+      </div>
+    </div>
+    <div class="guide-phase">
+      <div class="guide-phase-header"><span class="phase-num">5</span><div><div class="phase-title">The day before your exam</div><div class="phase-sub">Final review strategy</div></div></div>
+      <div class="guide-phase-body">
+        <p>Do not try to learn new things. Your goal is to activate what you already know.</p>
+        <ul>
+          <li>Read through the <strong>Exam Language</strong> section in full. Say each instruction word aloud.</li>
+          <li>Run one Flashcard session on All topics with Mixed direction — 20 cards.</li>
+          <li>Run one Multiple Choice session with Focus on missed terms enabled.</li>
+          <li>Stop studying at least 1 hour before bed.</li>
+        </ul>
+        <div class="guide-tip"><span class="tip-label">🔥 Streak goal</span>Study for at least 10–15 minutes every day. Spaced repetition is the most effective study method.</div>
+      </div>
+    </div>
+    <div class="guide-quick">
+      <h3 class="guide-quick-title">Quick reference — which mode for what?</h3>
+      <div class="guide-quick-grid">
+        <div class="qr-card"><div class="qr-icon">📖</div><div class="qr-mode">Glossary</div><div class="qr-use">First encounter. Read before quizzing.</div></div>
+        <div class="qr-card"><div class="qr-icon">🃏</div><div class="qr-mode">Flashcards</div><div class="qr-use">Daily habit. Build recognition in both languages.</div></div>
+        <div class="qr-card"><div class="qr-icon">☑</div><div class="qr-mode">Multiple choice</div><div class="qr-use">Simulate exam conditions.</div></div>
+        <div class="qr-card"><div class="qr-icon">✏️</div><div class="qr-mode">Fill in blank</div><div class="qr-use">Advanced recall. Most exam-like.</div></div>
+        <div class="qr-card"><div class="qr-icon">🔗</div><div class="qr-mode">Match columns</div><div class="qr-use">Quick warm-up in under 3 minutes.</div></div>
+      </div>
+    </div>
+  </div>
+  </div><!-- /ems-page-guide -->
+
+</div><!-- /subj-ems -->
+
+
+<!-- ════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════ -->
+<script>
+// ══════════════════════════════════════
+//  SUBJECT + PAGE SWITCHING
+// ══════════════════════════════════════
+let currentSubj = 'hist';
+let currentPage = 'glossary';
+
+function switchSubject(s) {
+  currentSubj = s;
+  document.querySelectorAll('.subject').forEach(el => el.classList.remove('active'));
+  document.getElementById('subj-' + s).classList.add('active');
+  document.getElementById('sp-hist').className = 'subj-pill' + (s==='hist' ? ' active-hist' : '');
+  document.getElementById('sp-ems').className  = 'subj-pill' + (s==='ems'  ? ' active-ems'  : '');
+  // reset to glossary page
+  currentPage = 'glossary';
+  document.querySelectorAll('.page-pill').forEach(b => b.classList.remove('on'));
+  document.getElementById('pp-gl').classList.add('on');
+  showPage(s, 'glossary');
+}
+
+function goPage(pg, btn) {
+  currentPage = pg;
+  document.querySelectorAll('.page-pill').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  showPage(currentSubj, pg);
+  if (pg === 'quiz') {
+    if (currentSubj === 'hist') hRefreshHome();
+    else eRefreshHome();
+  }
+}
+
+function showPage(subj, pg) {
+  const container = document.getElementById('subj-' + subj);
+  container.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById(subj + '-page-' + pg);
+  if (target) target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+// ══════════════════════════════════════
+//  ── HISTORY DATA ──
+// ══════════════════════════════════════
+const HSECTIONS=[
+  {id:'t1a',t:'t1',title:'Term 1 — The Rise of Nazi Germany',af:'Kwartaal 1 — Die totstandkoming van Nazi-Duitsland'},
+  {id:'t1b',t:'t1',title:'Term 1 — World War II in Europe',af:'Kwartaal 1 — Tweede Wêreldoorlog in Europa'},
+  {id:'t1c',t:'t1',title:'Term 1 — World War II in the Pacific',af:'Kwartaal 1 — Tweede Wêreldoorlog in die Stille Oseaan'},
+  {id:'t2a',t:'t2',title:'Term 2 — The Nuclear Age',af:'Kwartaal 2 — Die Kerntydperk'},
+  {id:'t2b',t:'t2',title:'Term 2 — The Cold War',af:'Kwartaal 2 — Die Koue Oorlog'},
+  {id:'skills',t:'sk',title:'History Skills & Exam Language',af:'Geskiedenisvaardigheide en Eksamenstaal'},
+];
+const HTLABELS={t1a:'Rise of Nazism',t1b:'WW2 Europe',t1c:'WW2 Pacific',t2a:'Nuclear Age',t2b:'Cold War',skills:'History Skills'};
+const HTERMS=[
+  {tab:'t1a',p:'p1',e:'Weimar Republic',a:'Weimar Republiek',why:'CAPS focus — "Why the Weimar Republic failed" is the stated Term 1 focus. Directly tested in the 2023 national exemplar.',de:'The democratic government that ruled Germany 1919–1933. Weak and unpopular, it collapsed — allowing Hitler to rise to power.',da:'Die demokratiese regering wat Duitsland 1919–1933 regeer het. Swak en ongewild het dit inmekaargestort.'},
+  {tab:'t1a',p:'p1',e:'Nazi Party (NSDAP)',a:'Nazi-Party (NSDAP)',why:'CAPS focus point. Tested in every available exam paper.',de:'The National Socialist German Workers\' Party led by Adolf Hitler. It promoted extreme nationalism and racism, ruling Germany 1933–1945.',da:'Die Nasionaal-Sosialistiese Duitse Arbeidersparty gelei deur Hitler. Dit het ekstreme nasionalisme en rassisme bevorder.'},
+  {tab:'t1a',p:'p1',e:'Democracy vs. Dictatorship',a:'Demokrasie teenoor Diktatorskap',why:'CAPS explicitly requires comparison of Nazi Germany (fascist state) with democracy.',de:'Democracy: citizens vote and have rights. Dictatorship: one leader has total power with no election. Nazi Germany shifted from democracy to dictatorship.',da:'Demokrasie: burgers stem en het regte. Diktatorskap: een leier het totale mag. Nazi-Duitsland het van demokrasie na diktatorskap beweeg.'},
+  {tab:'t1a',p:'p1',e:'Treaty of Versailles (1919)',a:'Verdrag van Versailles (1919)',why:'Named directly in CAPS. Foundation of why Germany became vulnerable to Nazism.',de:'The 1919 peace treaty that punished Germany after WW1 — taking land, limiting the army, forcing reparations. It created instability that enabled Nazism.',da:'Die 1919-vredesverdrag wat Duitsland gestraf het — grond afgeneem, leër beperk, herstelbetalings gedwing.'},
+  {tab:'t1a',p:'p1',e:'Enabling Act (1933)',a:'Magtigingswet (1933)',why:'Named directly in CAPS. Tested in source-based questions about how Hitler established a dictatorship.',de:'A 1933 law giving Hitler power to make laws without parliament\'s approval. This single act turned Germany into a dictatorship.',da:'\'n 1933-wet wat Hitler die mag gegee het om wette sonder parlementêre goedkeuring te maak.'},
+  {tab:'t1a',p:'p1',e:'Nuremberg Laws (1935)',a:'Nuremberg Wette (1935)',why:'Named directly in CAPS. Exams ask learners to explain what these laws did.',de:'Racist 1935 laws that stripped Jewish people of German citizenship and basic rights — the legal foundation of persecution.',da:'Rassistiese 1935-wette wat die Joodse volk van burgerskap en basiese regte ontneem het.'},
+  {tab:'t1a',p:'p1',e:'Fascism',a:'Fascisme',why:'CAPS states "Nazi Germany as an example of a fascist state (compared with democracy)" — an explicit required concept.',de:'A far-right political system with extreme nationalism, a powerful dictator, no political opposition, and strict control over society.',da:'\'n Uiters regse politieke stelsel met ekstreme nasionalisme, \'n magtige diktator, geen politieke opposisie.'},
+  {tab:'t1a',p:'p1',e:'The Great Depression (1929)',a:'Die Groot Depressie (1929)',why:'CAPS names it directly. Exam questions ask why Germans supported Hitler — the Depression is always the key reason.',de:'A worldwide economic crisis from 1929. Millions of Germans lost jobs — desperation made people support extreme parties like the Nazis.',da:'\'n Wêreldwye ekonomiese krisis vanaf 1929. Miljoene Duitsers het werk verloor — desperaatheid het mense na die Nazis gedryf.'},
+  {tab:'t1a',p:'p1',e:'Propaganda',a:'Propaganda',why:'Named in CAPS. Source-based exam questions frequently use Nazi propaganda and ask learners to identify bias and purpose.',de:'Biased or misleading information used by the Nazis to spread their ideas, control public thinking, and make Hitler popular.',da:'Bevooroordeelde inligting gebruik deur die Nazis om hul idees te versprei en openbare denke te beheer.'},
+  {tab:'t1a',p:'p2',e:'World War I',a:'Eerste Wêreldoorlog',why:'CAPS starts Term 1 with "End of WW1" as essential context.',de:'The global war 1914–1918. Germany\'s defeat led to the Treaty of Versailles, creating conditions for Nazism.',da:'Die wêreldoorlog 1914–1918. Duitsland se nederlaag het tot die Verdrag van Versailles gelei.'},
+  {tab:'t1a',p:'p2',e:'Reparations',a:'Herstelbetalings',why:'Part of the Treaty of Versailles. Needed to explain Germany\'s economic crisis.',de:'Payments Germany was forced to make after WW1 to compensate other countries for damage. They crippled the German economy.',da:'Betalings wat Duitsland gedwing was om na WO1 te maak. Dit het die Duitse ekonomie vernietig.'},
+  {tab:'t1a',p:'p2',e:'Elections of 1932 & 1933',a:'Verkiesings van 1932 en 1933',why:'Named directly in CAPS. Commonly asked: "How did Hitler come to power legally?"',de:'German elections in which the Nazi Party won enough votes to come to power legally. Economic desperation drove millions to vote for Hitler.',da:'Duitse verkiesings waar die Nazi-Party genoeg stemme gewen het om wettiglik aan bewind te kom.'},
+  {tab:'t1a',p:'p2',e:'Antisemitism',a:'Antisemitisme',why:'Underlies nearly every Nazi policy. Exams ask about the ideology behind persecution.',de:'Hatred and discrimination against Jewish people. Central to Nazi ideology, used to justify all anti-Jewish laws and eventually the Holocaust.',da:'Haat en diskriminasie teen die Joodse volk. Sentraal aan die Nazi-ideologie.'},
+  {tab:'t1a',p:'p2',e:'Concentration camp',a:'Konsentrasiekamp',why:'CAPS lists it explicitly. Exams ask what they were used for.',de:'Prison camps built by the Nazis — first for political opponents, later expanded to persecute Jews, Roma, and other groups.',da:'Gevangenekampe deur die Nazis gebou — eers vir politieke teenstanders, later vir Jode, Roma en ander groepe.'},
+  {tab:'t1a',p:'p2',e:'Nationalism',a:'Nasionalisme',why:'Core part of Nazi ideology. Needed to explain why Germans supported the party.',de:'Strong pride and loyalty to one\'s nation, believing it superior. In Nazi Germany this became extreme and dangerous.',da:'Sterk trots en lojaliteit aan jou nasie. In Nazi-Duitsland het dit ekstreem en gevaarlik geword.'},
+  {tab:'t1a',p:'p2',e:'Führer',a:'Führer',why:'Hitler\'s official title — must-know for any question about his role.',de:'German word meaning "leader." The title Hitler gave himself, indicating absolute power over Germany.',da:'Duitse woord wat "leier" beteken. Die titel wat Hitler homself gegee het, met absolute mag oor Duitsland.'},
+  {tab:'t1a',p:'p3',e:'Persecution',a:'Vervolging',why:'General term for Nazi treatment of minorities.',de:'The cruel and unjust treatment of a group because of their race, religion, or identity.',da:'Die wrede behandeling van \'n groep as gevolg van hul ras, godsdiens of identiteit.'},
+  {tab:'t1b',p:'p1',e:'Holocaust',a:'Holocaust',why:'CAPS core content. 5 hours allocated; every Grade 9 exam has at least one Holocaust question.',de:'The systematic, state-sponsored murder of six million Jewish people and millions of others by the Nazi regime during WW2.',da:'Die stelselmatige, staatsgesponsorde moord op ses miljoen Joodse mense en miljoene ander deur die Nazi-regime tydens WO2.'},
+  {tab:'t1b',p:'p1',e:'Genocide',a:'Volksmoord',why:'CAPS explicitly names genocide. Exams ask learners to define it and apply it to the Holocaust.',de:'The deliberate killing of a large group of people because of their race, ethnicity, or religion.',da:'Die doelbewuste doodmaak van \'n groot groep mense as gevolg van hul ras, etnisiteit of godsdiens.'},
+  {tab:'t1b',p:'p1',e:'"Final Solution"',a:'"Finale Oplossing"',why:'Named directly in CAPS. Exams ask what this term meant.',de:'The Nazi code name for their plan to systematically murder all Jewish people in Europe.',da:'Die Nazi-kodewoord vir hul plan om alle Joodse mense in Europa stelselmatig te vermoor.'},
+  {tab:'t1b',p:'p1',e:'Axis Powers vs. Allied Powers',a:'Spilmoondhede teenoor Geallieerdes',why:'CAPS states "Outbreak of WW2: Axis vs. Allies" as a required concept.',de:'Axis: Germany, Italy, Japan. Allies: Britain, France, Soviet Union, USA.',da:'Spilmoondhede: Duitsland, Italië, Japan. Geallieerdes: Brittanje, Frankryk, Sowjetunie, VSA.'},
+  {tab:'t1b',p:'p1',e:'Resistance to Nazism',a:'Weerstand teen Nazisme',why:'CAPS names THREE specific resistance examples as required content.',de:'Sophie Scholl & White Rose Movement (anti-Nazi leaflets); Dietrich Bonhoeffer & Confessing Church; Warsaw Ghetto Uprising (armed Jewish resistance, 1943).',da:'Sophie Scholl & Witroosbeweging; Dietrich Bonhoeffer & Belydende Kerk; Warskou Ghetto Opstand (1943).'},
+  {tab:'t1b',p:'p2',e:'Extermination camps',a:'Uitwissingskampe',why:'Named directly in CAPS. Exams ask how Nazi persecution escalated to mass murder.',de:'Nazi death camps (e.g. Auschwitz) built to systematically murder Jews and persecuted groups on a mass scale.',da:'Nazi-doodskampe (bv. Auschwitz) gebou om Jode en vervolgde groepe op groot skaal te vermoor.'},
+  {tab:'t1b',p:'p2',e:'Lebensraum',a:'Lewensruimte / Lebensraum',why:'Named in CAPS as the reason for Nazi expansionism.',de:'German for "living space." Hitler\'s justification for invading neighbours, claiming Germany needed more territory.',da:'Duits vir "lewensruimte." Hitler se regverdiging vir die inval van buurlande.'},
+  {tab:'t1b',p:'p2',e:'Ghetto',a:'Ghetto',why:'Essential for understanding the Warsaw Ghetto Uprising — a named CAPS requirement.',de:'A part of a city where Jews were forced to live in overcrowded, harsh conditions.',da:'\'n Deel van \'n stad waar Jode gedwing was om in oorvol, harde toestande te woon.'},
+  {tab:'t1b',p:'p3',e:'End of WW2 in Europe (1945)',a:'Einde van WO2 in Europa (1945)',why:'CAPS content bullet. Chronological endpoint for Term 1.',de:'Germany surrendered on 8 May 1945 (VE Day). Hitler died by suicide on 30 April 1945.',da:'Duitsland het op 8 Mei 1945 (VE-dag) oorgegee. Hitler het op 30 April 1945 selfmoord gepleeg.'},
+  {tab:'t1c',p:'p1',e:'Pearl Harbour',a:'Pearl Harbour',why:'Named directly in CAPS. Very common exam question.',de:'Japan\'s surprise attack on the US naval base in Hawaii on 7 December 1941, bringing the USA into WW2.',da:'Japan se verrassingsaanval op die VSA se vlootbasis in Hawaii op 7 Desember 1941.'},
+  {tab:'t1c',p:'p2',e:'Internment camps (USA)',a:'Interneringskampe (VSA)',why:'Named in CAPS. Used in exams to show democracies also violated rights during wartime.',de:'Camps where Japanese-American citizens were forcibly held during WW2, suspected of being security risks.',da:'Kampe waar Japannese-Amerikaanse burgers met geweld aangehou is tydens WO2.'},
+  {tab:'t1c',p:'p2',e:'Atrocities',a:'Gruweldade',why:'Named in CAPS under Japanese expansion in China.',de:'Extremely cruel acts against civilians. Japan committed atrocities in China including mass killings.',da:'Uiters wrede dade teen burgers. Japan het gruweldade in China gepleeg.'},
+  {tab:'t1c',p:'p3',e:'Prisoner-of-war camps',a:'Krysgevangenekampe',why:'Named in CAPS. Supporting context for Japanese conduct.',de:'Camps where captured enemy soldiers were held. Japanese POW camps were notorious for brutal conditions.',da:'Kampe waar gevange soldate aangehou is. Japannese kamps was berug vir brutale toestande.'},
+  {tab:'t2a',p:'p1',e:'Atomic bomb / Hiroshima & Nagasaki',a:'Atoombom / Hiroshima en Nagasaki',why:'CAPS focus — "Atomic bombs and the beginning of the Nuclear Age" is a named content block.',de:'The USA dropped atomic bombs on Hiroshima (6 Aug 1945) and Nagasaki (9 Aug 1945), killing 130,000–226,000 people and forcing Japan\'s surrender.',da:'Die VSA het atoombomme op Hiroshima (6 Aug 1945) en Nagasaki (9 Aug 1945) gegooi.'},
+  {tab:'t2a',p:'p1',e:'Was it justified? (atomic bombs)',a:'Was dit geregverdig? (atoombomme)',why:'CAPS explicitly lists "Was it justified?" as a required question.',de:'FOR: ended the war quickly, saved lives from invasion. AGAINST: targeted civilians, mass suffering, nuclear radiation continued killing for decades.',da:'VIR: beeindig oorlog vinnig, lewens gespaar. TEEN: burgers geteiken, massalyding, kernstraling het dekades lank voortgeduur.'},
+  {tab:'t2a',p:'p1',e:'Communism vs. Capitalism',a:'Kommunisme teenoor Kapitalisme',why:'CAPS names this as a 2-hour content block. Every Cold War question depends on understanding this contrast.',de:'Communism (USSR): state owns all property, equal distribution. Capitalism (USA): private ownership, free market. This clash caused the Cold War.',da:'Kommunisme (USSR): staat besit alle eiendom. Kapitalisme (VSA): private eienaarskap, vrye mark. Hierdie botsing het die Koue Oorlog veroorsaak.'},
+  {tab:'t2a',p:'p1',e:'Superpower',a:'Supermoondheid',why:'CAPS explicitly requires "Definition of the superpowers" as a 1-hour content block.',de:'A nation with enormous military, economic, and political power that can influence events worldwide. After WW2: the USA and USSR.',da:'\'n Nasie met geweldige mag wat wêreldwye gebeure kan beïnvloed. Na WO2: die VSA en USSR.'},
+  {tab:'t2a',p:'p2',e:'Nuclear deterrence / MAD',a:'Kernafskrikmiddel / Wedersydse Versekerde Vernietiging',why:'Explains why superpowers never directly fought.',de:'Both superpowers had enough nuclear weapons to destroy each other. Fear of Mutually Assured Destruction (MAD) prevented direct war.',da:'Beide supermoondhede het genoeg kernwapens gehad. Vrees vir wedersydse vernietiging het direkte oorlog verhoed.'},
+  {tab:'t2a',p:'p2',e:'Ideology',a:'Ideologie',why:'Underpins the entire Cold War.',de:'A system of ideas about politics, economics, and society. The Cold War was a fundamental clash of ideologies: communism vs capitalism.',da:'\'n Stelsel van idees oor politiek en ekonomie. Die Koue Oorlog was \'n botsing van ideologieë.'},
+  {tab:'t2b',p:'p1',e:'Cold War',a:'Koue Oorlog',why:'CAPS requires explicit definition. Every exam has a multiple-choice question defining or dating the Cold War.',de:'Political tension and military rivalry (1945–1991) between the USA and USSR. Called "cold" because they never directly fought.',da:'Politieke spanning en militêre wedywering (1945–1991) tussen die VSA en USSR.'},
+  {tab:'t2b',p:'p1',e:'Berlin Wall (1961) & its fall (1989)',a:'Berlynse Muur (1961) en sy val (1989)',why:'Named in CAPS twice. The most tested Cold War event.',de:'Built 1961 to stop East Germans escaping to West Berlin — the most powerful symbol of the Cold War. Torn down 9 November 1989.',da:'Gebou in 1961 om Oos-Duitsers te keer. Op 9 November 1989 afgebreek, wat die einde van die Koue Oorlog gesimboliseer het.'},
+  {tab:'t2b',p:'p1',e:'Arms race',a:'Wapenwedloop',why:'Named directly in CAPS as a 6-hour content item.',de:'The competition between the USA and USSR to build bigger and more powerful nuclear weapons than the other.',da:'Die wedstryd tussen die VSA en USSR om groter en meer kragtige kernwapens te bou.'},
+  {tab:'t2b',p:'p1',e:'Space race',a:'Ruimtewedloop',why:'Named directly in CAPS. Exams ask about key milestones.',de:'USA vs USSR space competition. Key events: Sputnik (USSR, 1957), Gagarin in space (1961), Moon landing USA (1969).',da:'VSA teen USSR-ruimtewedstryd. Spoetnik (USSR, 1957), Gagarin (1961), maanlanding VSA (1969).'},
+  {tab:'t2b',p:'p1',e:'Fall of the Soviet Union (1991)',a:'Val van die Sowjetunie (1991)',why:'Named in CAPS. The 2023 exemplar asks directly when the Cold War ended.',de:'In 1991 the USSR broke apart into 15 independent countries, definitively ending the Cold War.',da:'In 1991 het die USSR uiteengeval in 15 onafhanklike lande en die Koue Oorlog beeindig.'},
+  {tab:'t2b',p:'p2',e:'Division of Germany (1946)',a:'Verdeling van Duitsland (1946)',why:'Named in CAPS. Needed to explain why the Berlin Wall was built.',de:'After WW2, Germany split into West Germany (democratic, USA-backed) and East Germany (communist, USSR-controlled).',da:'Na WO2 is Duitsland verdeel in Wes-Duitsland (demokraties, VSA) en Oos-Duitsland (kommunisties, USSR).'},
+  {tab:'t2b',p:'p2',e:'Iron Curtain',a:'Ystergordyn',why:'Widely referenced in Cold War sources. Exam extracts often mention the Iron Curtain.',de:'The political barrier dividing communist Eastern Europe from democratic Western Europe after WW2. Named by Winston Churchill in 1946.',da:'Die versperring wat kommunistiese Oos-Europa van demokratiese Wes-Europa na WO2 geskei het.'},
+  {tab:'t2b',p:'p2',e:'Satellite / Sputnik (1957)',a:'Satelliet / Spoetnik (1957)',why:'Key space race event — exams ask which country launched the first satellite and when.',de:'The USSR\'s Sputnik (1957) was the world\'s first artificial satellite. It launched the space race and shocked the USA.',da:'Die USSR se Spoetnik (1957) was die wêreld se eerste kunsmatige satelliet.'},
+  {tab:'t2b',p:'p2',e:'Proxy war',a:'Volmagoorlog',why:'Explains how the Cold War was fought indirectly.',de:'A conflict where the USA and USSR backed opposing sides in another country\'s war instead of fighting directly.',da:'\'n Konflik waar die VSA en USSR teenoorgestelde kante in \'n ander land se oorlog ondersteun het.'},
+  {tab:'t2b',p:'p3',e:'Balance of power',a:'Magsbalans',why:'CAPS describes the Cold War focus as "change in balance of power."',de:'The distribution of power between nations so no single country can dominate. WW2 shifted this to the USA and USSR.',da:'Die verdeling van mag sodat geen land die res kan oorheers nie. WO2 het die balans na die VSA en USSR verskuif.'},
+  {tab:'skills',p:'p1',e:'Explain / Verduidelik',a:'Verduidelik',why:'The single most common instruction word in Afrikaans history exams.',de:'Give reasons and details — not just yes/no. Always say WHAT happened, WHY it happened, and WHAT the result was.',da:'Gee redes en besonderhede — nie net ja/nee. Sê altyd WAT gebeur het, WAAROM en WAT die gevolg was.'},
+  {tab:'skills',p:'p1',e:'Use Source A and your own knowledge…',a:'Gebruik Bron A en u eie kennis…',why:'Appears in EVERY exam paper. If you only use the source or only your knowledge, you lose half the marks.',de:'You MUST use BOTH: (1) quote something specific from the source, AND (2) add a fact from your own knowledge NOT in the source.',da:'Jy MOET BEIDE gebruik: (1) aanhaal uit die bron, EN (2) \'n feit uit jou eie kennis byvoeg wat NIE in die bron is nie.'},
+  {tab:'skills',p:'p1',e:'Describe / Beskryf',a:'Beskryf',why:'Second most common instruction word. Different from explain — no reasons needed, just facts and details.',de:'Say what something is, what it looks like, or what happened — with specific details. No reasons needed (that is "explain").',da:'Sê wat iets is of wat gebeur het — met spesifieke besonderhede. Geen redes nodig nie.'},
+  {tab:'skills',p:'p1',e:'Primary vs. Secondary source',a:'Primêre teenoor Sekondêre bron',why:'Tested in EVERY Grade 9 history exam.',de:'Primary: created at the time of the event (e.g. wartime letter, photograph). Secondary: created later by historians (e.g. textbook).',da:'Primêre: geskep ten tyde van die gebeurtenis (bv. brief, foto). Sekondêre: later geskep deur historici (bv. handboek).'},
+  {tab:'skills',p:'p1',e:'Bias / Bevooroordeeldheid',a:'Bevooroordeeldheid',why:'Every source-based section has a bias question.',de:'When a source shows only one side, unfairly favouring one group or viewpoint. To identify bias: ask WHO wrote it, WHEN, and WHY.',da:'Wanneer \'n bron slegs een kant toon. Vra: WIE het dit geskryf, WANNEER, en WAAROM.'},
+  {tab:'skills',p:'p2',e:'Cause and effect',a:'Oorsaak en gevolg',why:'CAPS Section 2.4.4 required concept.',de:'Cause: the reason why something happened. Effect: what resulted. Always give at least TWO causes and TWO effects.',da:'Oorsaak: die rede waarom iets gebeur het. Gevolg: wat voortgespruit het. Gee altyd minstens TWEE oorsake en gevolge.'},
+  {tab:'skills',p:'p2',e:'Compare / Vergelyk',a:'Vergelyk',why:'Used in CAPS for democracy vs fascism comparison.',de:'Show how two things are BOTH similar AND different. Always mention both sides.',da:'Toon hoe twee dinge BEIDE ooreenstem EN verskil. Noem altyd beide kante.'},
+  {tab:'skills',p:'p2',e:'Evaluate / Assess',a:'Evalueer / Beoordeel',why:'Higher-order instruction word in longer essay questions.',de:'Judge the value or importance of something — giving reasons. Always give BOTH sides before your conclusion.',da:'Oordeel oor die waarde of belangrikheid — met redes. Gee altyd BEIDE kante voor jou gevolgtrekking.'},
+  {tab:'skills',p:'p2',e:'Turning point',a:'Keerpunt',why:'CAPS uses this concept for all four Grade 9 terms.',de:'A moment when things changed significantly, leading to a new direction. Explain what was different BEFORE and AFTER.',da:'\'n Oomblik toe dinge beduidend verander het. Verduidelik wat VOOR en NA anders was.'},
+  {tab:'skills',p:'p3',e:'Change and continuity',a:'Verandering en kontinuiteit',why:'CAPS Section 2.4.4 required concept.',de:'Historians compare what changed and what stayed the same.',da:'Historici vergelyk wat verander het en wat dieselfde gebly het.'},
+  {tab:'skills',p:'p3',e:'Multi-perspective approach',a:'Multi-perspektiewe benadering',why:'CAPS Section 2.4.4 required concept.',de:'Looking at the same event from multiple viewpoints. No single source tells the whole story.',da:'Na dieselfde gebeurtenis kyk vanuit verskillende standpunte. Geen enkele bron vertel die hele storie nie.'},
+];
+
+// ══════════════════════════════════════
+//  ── HISTORY GLOSSARY ──
+// ══════════════════════════════════════
+let hglT='all', hglP='all', hglCards=[];
+function buildHistGlossary(){
+  const cont=document.getElementById('hgl-content');
+  cont.innerHTML=''; hglCards=[];
+  let p1c=0;
+  HSECTIONS.forEach(sec=>{
+    const terms=HTERMS.filter(t=>t.tab===sec.id);
+    const block=document.createElement('div');
+    block.className='gl-section'; block.dataset.tab=sec.id;
+    block.innerHTML='<div class="sec-hdr"><span class="sec-title">'+sec.af+'</span><span class="sec-af">— '+sec.title+'</span><span class="sec-count">'+terms.length+' terme</span></div>';
+    const grid=document.createElement('div'); grid.className='term-grid';
+    terms.forEach((t,i)=>{
+      if(t.p==='p1')p1c++;
+      const id='ht'+sec.id+'_'+i;
+      const pL=t.p==='p1'?'🔴 Moet ken':t.p==='p2'?'🎯 Hoë prioriteit':'◯ Goed om te weet';
+      const pC=t.p==='p1'?'pb1':t.p==='p2'?'pb2':'pb3';
+      const bC=t.p==='p1'?'gp1':t.p==='p2'?'gp2':'';
+      const card=document.createElement('div');
+      card.className='gcard '+(bC||'').trim();
+      card.dataset.tab=t.tab; card.dataset.p=t.p;
+      card.dataset.en=t.e.toLowerCase(); card.dataset.af=t.a.toLowerCase();
+      // HEAD
+      const head=document.createElement('div'); head.className='gcard-head';
+      head.addEventListener('click',()=>hgToggle(id));
+      const terms_div=document.createElement('div'); terms_div.className='gcard-terms';
+      const af_div=document.createElement('div'); af_div.className='gcard-af'; af_div.textContent=t.a;
+      const en_div=document.createElement('div'); en_div.className='gcard-en'; en_div.textContent=t.e;
+      terms_div.appendChild(af_div); terms_div.appendChild(en_div);
+      const right=document.createElement('div'); right.className='gcard-right';
+      const badge=document.createElement('span'); badge.className='pbadge '+pC; badge.textContent=pL;
+      right.appendChild(badge);
+      const toggle=document.createElement('div'); toggle.className='gtoggle'; toggle.id='hgarr_'+id; toggle.textContent='▼';
+      head.appendChild(terms_div); head.appendChild(right); head.appendChild(toggle);
+      // BODY
+      const body=document.createElement('div'); body.className='gcard-body'; body.id='hgbody_'+id;
+      const why=document.createElement('div'); why.className='why-row';
+      const whyStrong=document.createElement('strong'); whyStrong.textContent='Hoekom hierdie prioriteit: ';
+      why.appendChild(whyStrong); why.appendChild(document.createTextNode(t.why));
+      const defRow=document.createElement('div'); defRow.className='def-row';
+      const afCol=document.createElement('div'); afCol.className='def-col af';
+      const afLang=document.createElement('div'); afLang.className='def-lang'; afLang.textContent='Afrikaans';
+      afCol.appendChild(afLang); afCol.appendChild(document.createTextNode(t.da));
+      const enCol=document.createElement('div'); enCol.className='def-col en';
+      const enLang=document.createElement('div'); enLang.className='def-lang'; enLang.textContent='Engels';
+      enCol.appendChild(enLang); enCol.appendChild(document.createTextNode(t.de));
+      defRow.appendChild(afCol); defRow.appendChild(enCol);
+      body.appendChild(why); body.appendChild(defRow);
+      card.appendChild(head); card.appendChild(body);
+      grid.appendChild(card); hglCards.push(card);
+    });
+    block.appendChild(grid); cont.appendChild(block);
+  });
+  document.getElementById('hg-total').textContent=HTERMS.length;
+  document.getElementById('hg-p1').textContent=p1c;
+  hglApply();
+}
+function hgToggle(id){
+  const body=document.getElementById('hgbody_'+id);
+  const arr=document.getElementById('hgarr_'+id);
+  const card=body.closest('.gcard');
+  const open=body.style.display==='block';
+  body.style.display=open?'none':'block';
+  arr.textContent=open?'▼':'▲';
+  card.classList.toggle('open',!open);
+}
+function hglTopic(t,el){hglT=t;document.querySelectorAll('#hgl-tabs .tab').forEach(b=>b.classList.remove('on'));el.classList.add('on');document.getElementById('hgl-search').value='';hglApply();}
+function hglPri(p,el){hglP=p;document.querySelectorAll('.pri-tabs .ptab').forEach(b=>{b.className='ptab'});el.className='ptab '+(p==='p1'?'on-p1':p==='p2'?'on-p2':'on-all');document.getElementById('hgl-search').value='';hglApply();}
+function hglFilter(){hglT='all';hglP='all';document.querySelectorAll('#hgl-tabs .tab').forEach(b=>b.classList.remove('on'));document.querySelectorAll('#hgl-tabs .tab')[0].classList.add('on');document.querySelectorAll('.pri-tabs .ptab').forEach(b=>b.className='ptab');document.getElementById('hpt-all').className='ptab on-all';hglApply();}
+function hglApply(){
+  const q=document.getElementById('hgl-search').value.toLowerCase().trim();
+  document.querySelectorAll('#hgl-content .gl-section').forEach(s=>{s.style.display=(hglT==='all'||s.dataset.tab===hglT)?'':'none';});
+  let shown=0;
+  hglCards.forEach(c=>{
+    const ok=(hglT==='all'||c.dataset.tab===hglT)&&(hglP==='all'||c.dataset.p===hglP)&&(!q||c.dataset.en.includes(q)||c.dataset.af.includes(q));
+    c.style.display=ok?'':'none'; if(ok)shown++;
+  });
+  document.querySelectorAll('#hgl-content .gl-section').forEach(s=>{
+    if(s.dataset.tab){const any=[...s.querySelectorAll('.gcard')].some(c=>c.style.display!=='none');s.style.display=any?'':'none';}
+  });
+  document.getElementById('hgl-count').textContent=shown+' van '+HTERMS.length+' terme';
+}
+
+// ══════════════════════════════════════
+//  ── HISTORY QUIZ ──
+// ══════════════════════════════════════
+const HBADGES=[
+  {id:'first',icon:'⭐',label:'Eerste sessie'},
+  {id:'streak3',icon:'🔥',label:'3-dag reeks'},
+  {id:'streak7',icon:'🏆',label:'7-dag reeks'},
+  {id:'perfect',icon:'💯',label:'Perfekte telling'},
+  {id:'master10',icon:'✅',label:'10 bemeester'},
+  {id:'explorer',icon:'🧭',label:'Verkenner'},
+];
+let HS=hLoadS(), HQ={mode:'mc'};
+function hLoadS(){try{const r=localStorage.getItem('gr9hist_v1');if(r){const p=JSON.parse(r);if(p.best==='null'||p.best===undefined)p.best=null;return p;}}catch(e){}return{sessions:0,best:null,streak:0,lastDate:null,mastered:{},wrong:[],badges:[],modes:[]};}
+function hSaveS(){try{localStorage.setItem('gr9hist_v1',JSON.stringify(HS));}catch(e){}}
+function hRefreshHome(){
+  document.getElementById('hs-sess').textContent=HS.sessions;
+  document.getElementById('hs-best').textContent=(HS.best!==null&&HS.best!==undefined&&HS.best!=='null')?HS.best+'%':'—';
+  document.getElementById('hs-streak').textContent=HS.streak;
+  document.getElementById('hs-mast').textContent=Object.values(HS.mastered).filter(v=>v>=3).length;
+  const row=document.getElementById('h-badges-row'); row.innerHTML='';
+  HBADGES.forEach(b=>{const el=document.createElement('div');el.className='bchip'+(HS.badges.includes(b.id)?' earned':'');el.innerHTML=b.icon+' '+b.label;row.appendChild(el);});
+}
+function hPickMode(m,el){document.querySelectorAll('#hqhome .mcard').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');HQ.mode=m;}
+function hGetPool(){
+  const t=document.getElementById('hq-topic').value;
+  if(t==='wrong'){const wt=HS.wrong||[];const r=HTERMS.filter(x=>wt.includes(x.e));return r.length>=4?r:HTERMS;}
+  if(t==='p1')return HTERMS.filter(x=>x.p==='p1');
+  if(t==='p12')return HTERMS.filter(x=>x.p==='p1'||x.p==='p2');
+  return t==='all'?HTERMS:HTERMS.filter(x=>x.tab===t);
+}
+function hBuildQs(pool,dir,n){
+  const dirs=['en-af','af-en','def-en','def-af'];
+  const sh=[...pool].sort(()=>Math.random()-.5);
+  const lim=n>=999?sh.length:Math.min(n,sh.length);
+  const qs=[];
+  for(let i=0;i<lim;i++){
+    const t=sh[i%sh.length];
+    const d=dir==='mix'?dirs[Math.floor(Math.random()*dirs.length)]:dir;
+    let prompt,answer,dirLabel;
+    if(d==='en-af'){prompt=t.e;answer=t.a;dirLabel='Wat is die Afrikaans vir:';}
+    else if(d==='af-en'){prompt=t.a;answer=t.e;dirLabel='Wat is die Engels vir:';}
+    else if(d==='def-en'){prompt=t.de;answer=t.e;dirLabel='Noem die term (Engels) beskryf:';}
+    else{prompt=t.da;answer=t.a;dirLabel='Noem die term (Afrikaans) beskryf:';}
+    qs.push({t,prompt,answer,dirLabel,d});
+  }
+  return qs;
+}
+function hUpdateStreak(){const today=new Date().toDateString();if(HS.lastDate===today)return;const yest=new Date(Date.now()-86400000).toDateString();HS.streak=HS.lastDate===yest?HS.streak+1:1;HS.lastDate=today;}
+function hStartQuiz(){
+  const pool=hGetPool();if(pool.length<2){alert("Nie genoeg terme nie. Kies \u2018n breër filter.");return;}
+  const dir=document.getElementById('hq-dir').value;
+  const n=parseInt(document.getElementById('hq-count').value);
+  const mode=HQ.mode||'mc';
+  HQ={mode,pool,dir,n,qs:hBuildQs(pool,dir,n),idx:0,correct:0,wrong:0,missed:[]};
+  hUpdateStreak();if(!HS.modes)HS.modes=[];if(!HS.modes.includes(mode))HS.modes.push(mode);
+  hShowQS(mode==='mc'?'hqmc':mode==='flash'?'hqflash':mode==='type'?'hqtype':'hqmatch');
+  if(mode==='mc')hRenderMC();else if(mode==='flash')hRenderFlash();else if(mode==='type')hRenderType();else hInitMatch();
+}
+function hShowQS(id){document.querySelectorAll('#hist-page-quiz .qscreen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+// MC
+function hRenderMC(){
+  const q=HQ.qs[HQ.idx],tot=HQ.qs.length;
+  document.getElementById('hmc-prog').style.width=Math.round(HQ.idx/tot*100)+'%';
+  document.getElementById('hmc-num').textContent='Vraag '+(HQ.idx+1)+' van '+tot;
+  document.getElementById('hmc-sc').textContent=HQ.correct+' korrek';
+  document.getElementById('hmc-pill').textContent=HTLABELS[q.t.tab]||q.t.tab;
+  document.getElementById('hmc-dir').textContent=q.dirLabel;
+  document.getElementById('hmc-prompt').textContent=q.prompt;
+  document.getElementById('hmc-fb').innerHTML='';
+  document.getElementById('hmc-next').style.display='none';
+  const opts=[q.answer,...HQ.pool.filter(t=>t.e!==q.t.e).sort(()=>Math.random()-.5).slice(0,3).map(t=>q.d==='en-af'?t.a:q.d==='af-en'?t.e:q.d==='def-en'?t.e:t.a)].slice(0,4).sort(()=>Math.random()-.5);
+  const grid=document.getElementById('hmc-opts'); grid.innerHTML='';
+  opts.forEach(o=>{const b=document.createElement('button');b.className='mc-opt';b.textContent=o;b.onclick=()=>hCheckMC(b,o,q);grid.appendChild(b);});
+}
+function hCheckMC(btn,chosen,q){
+  document.querySelectorAll('#hqmc .mc-opt').forEach(b=>b.disabled=true);
+  const ok=hNorm(chosen)===hNorm(q.answer);
+  btn.classList.add(ok?'mc-ok':'mc-bad');
+  if(ok){HQ.correct++;hMark(q.t.e,true);document.getElementById('hmc-fb').innerHTML='<div class="fb ok"><div class="fb-title">Korrek!</div></div>';}
+  else{HQ.wrong++;HQ.missed.push(q.t.e);hMark(q.t.e,false);document.querySelectorAll('#hqmc .mc-opt').forEach(b=>{if(hNorm(b.textContent)===hNorm(q.answer))b.classList.add('mc-show');});document.getElementById('hmc-fb').innerHTML='<div class="fb bad"><div class="fb-title">Nie reg nie.</div>Antwoord: <strong>'+q.answer+'</strong></div>';}
+  document.getElementById('hmc-sc').textContent=HQ.correct+' korrek';
+  document.getElementById('hmc-next').style.display='inline-block';
+}
+function hNextQ(mode){HQ.idx++;if(HQ.idx>=HQ.qs.length){hEndQuiz();return;}if(mode==='mc')hRenderMC();else hRenderType();}
+// FLASH
+function hRenderFlash(){
+  const q=HQ.qs[HQ.idx],tot=HQ.qs.length;
+  document.getElementById('hfl-prog').style.width=Math.round(HQ.idx/tot*100)+'%';
+  document.getElementById('hfl-num').textContent='Kaart '+(HQ.idx+1)+' van '+tot;
+  document.getElementById('hfl-sc').textContent=HQ.correct+' geweet';
+  document.getElementById('hfl-pill').textContent=HTLABELS[q.t.tab]||q.t.tab;
+  document.getElementById('hfl-dir').textContent=q.dirLabel;
+  document.getElementById('hfl-prompt').textContent=q.prompt;
+  document.getElementById('hfl-af').textContent=q.d.startsWith('def')?q.t.a:q.t.da;
+  document.getElementById('hfl-en').textContent=q.d.startsWith('def')?q.answer:q.t.de;
+  document.getElementById('h-flip-front').style.display='';
+  document.getElementById('h-flip-back').style.display='none';
+  document.getElementById('h-flip-acts').style.display='none';
+}
+function hDoFlip(){document.getElementById('h-flip-front').style.display='none';document.getElementById('h-flip-back').style.display='block';document.getElementById('h-flip-acts').style.display='flex';}
+function hFlashRate(knew){const q=HQ.qs[HQ.idx];if(knew){HQ.correct++;hMark(q.t.e,true);}else{HQ.wrong++;HQ.missed.push(q.t.e);hMark(q.t.e,false);}document.getElementById('hfl-sc').textContent=HQ.correct+' geweet';HQ.idx++;if(HQ.idx>=HQ.qs.length){hEndQuiz();return;}hRenderFlash();}
+// TYPE
+function hRenderType(){
+  const q=HQ.qs[HQ.idx],tot=HQ.qs.length;
+  document.getElementById('hty-prog').style.width=Math.round(HQ.idx/tot*100)+'%';
+  document.getElementById('hty-num').textContent='Vraag '+(HQ.idx+1)+' van '+tot;
+  document.getElementById('hty-sc').textContent=HQ.correct+' korrek';
+  document.getElementById('hty-pill').textContent=HTLABELS[q.t.tab]||q.t.tab;
+  document.getElementById('hty-dir').textContent=q.dirLabel;
+  document.getElementById('hty-prompt').textContent=q.prompt;
+  const inp=document.getElementById('h-type-inp');inp.value='';inp.disabled=false;inp.className='type-input';
+  document.getElementById('hty-fb').innerHTML='';
+  document.getElementById('hty-check').style.display='inline-block';
+  document.getElementById('hty-next').style.display='none';
+  inp.focus();
+}
+function hSubmitType(){
+  const q=HQ.qs[HQ.idx];const inp=document.getElementById('h-type-inp');const val=inp.value.trim();if(!val)return;
+  inp.disabled=true;document.getElementById('hty-check').style.display='none';document.getElementById('hty-next').style.display='inline-block';
+  const alts=q.answer.split('/').map(s=>hNorm(s.trim()));
+  const ok=alts.includes(hNorm(val));
+  inp.classList.add(ok?'t-ok':'t-bad');
+  if(ok){HQ.correct++;hMark(q.t.e,true);document.getElementById('hty-fb').innerHTML='<div class="fb ok"><div class="fb-title">Korrek!</div></div>';}
+  else{HQ.wrong++;HQ.missed.push(q.t.e);hMark(q.t.e,false);document.getElementById('hty-fb').innerHTML='<div class="fb bad"><div class="fb-title">Nie reg nie.</div>Antwoord: <strong>'+q.answer+'</strong></div>';}
+  document.getElementById('hty-sc').textContent=HQ.correct+' korrek';
+}
+// MATCH
+let HM={};
+function hInitMatch(){HQ.correct=0;HQ.wrong=0;HM={round:0,total:0,selL:null,selR:null};hLoadMR();}
+function hLoadMR(){
+  const pool=[...HQ.pool].sort(()=>Math.random()-.5).slice(0,6);
+  HM.pool=pool;HM.pairs=0;HM.selL=null;HM.selR=null;HM.total+=pool.length;
+  const lL=[...pool].sort(()=>Math.random()-.5);const lR=[...pool].sort(()=>Math.random()-.5);
+  document.getElementById('hma-num').textContent='Rondte '+(HM.round+1);
+  document.getElementById('hma-sc').textContent=HQ.correct+' gekoppel';
+  document.getElementById('hma-prog').style.width='0%';
+  document.getElementById('hma-fb').innerHTML='';document.getElementById('hma-next').style.display='none';
+  const lDiv=document.getElementById('hma-left');lDiv.innerHTML='';
+  const rDiv=document.getElementById('hma-right');rDiv.innerHTML='';
+  lL.forEach(t=>{const el=document.createElement('div');el.className='match-item';el.textContent=t.a;el.dataset.k=t.e;el.onclick=()=>hPickM(el,'l');lDiv.appendChild(el);});
+  lR.forEach(t=>{const el=document.createElement('div');el.className='match-item';el.textContent=t.e;el.dataset.k=t.e;el.onclick=()=>hPickM(el,'r');rDiv.appendChild(el);});
+}
+function hPickM(el,side){
+  if(el.classList.contains('mok'))return;
+  if(side==='l'){document.querySelectorAll('#hma-left .match-item').forEach(e=>e.classList.remove('msel'));el.classList.add('msel');HM.selL=el;}
+  else{document.querySelectorAll('#hma-right .match-item').forEach(e=>e.classList.remove('msel'));el.classList.add('msel');HM.selR=el;}
+  if(HM.selL&&HM.selR){
+    if(HM.selL.dataset.k===HM.selR.dataset.k){
+      HM.selL.classList.remove('msel');HM.selR.classList.remove('msel');HM.selL.classList.add('mok');HM.selR.classList.add('mok');
+      HM.pairs++;HQ.correct++;hMark(HM.selL.dataset.k,true);
+      document.getElementById('hma-sc').textContent=HQ.correct+' gekoppel';
+      document.getElementById('hma-prog').style.width=Math.round(HM.pairs/HM.pool.length*100)+'%';
+      if(HM.pairs===HM.pool.length){document.getElementById('hma-next').style.display='inline-block';document.getElementById('hma-fb').innerHTML='<div class="fb ok"><div class="fb-title">Round complete!</div></div>';}
+    }else{
+      HM.selL.classList.add('mbad');HM.selR.classList.add('mbad');HQ.wrong++;HQ.missed.push(HM.selL.dataset.k);hMark(HM.selL.dataset.k,false);
+      const sL=HM.selL,sR=HM.selR;HM.selL=null;HM.selR=null;
+      setTimeout(()=>{sL.classList.remove('mbad','msel');sR.classList.remove('mbad','msel');},700);return;
+    }
+    HM.selL=null;HM.selR=null;
+  }
+}
+function hNextMatchRound(){HM.round++;if(HM.round>=3){hEndQuiz();return;}hLoadMR();}
+// END
+function hMark(k,ok){if(!HS.mastered[k])HS.mastered[k]=0;HS.mastered[k]=ok?Math.min(5,HS.mastered[k]+1):Math.max(0,HS.mastered[k]-1);}
+function hNorm(s){return s.toLowerCase().replace(/[^a-z0-9äëïöüáéíóúàèìòùâêîôû]/g,'').trim();}
+function hEndQuiz(){
+  const tot=HQ.correct+HQ.wrong,pct=tot>0?Math.round(HQ.correct/tot*100):0;
+  HS.sessions++;if(HS.best===null||pct>HS.best)HS.best=pct;HS.wrong=[...new Set(HQ.missed)];
+  const newB=hCheckBadges(pct);hSaveS();hShowResults(pct,tot,newB);
+}
+function hCheckBadges(pct){
+  const got=[],add=(id)=>{if(!HS.badges.includes(id)){HS.badges.push(id);got.push(id);}};
+  if(HS.sessions>=1)add('first');if(HS.streak>=3)add('streak3');if(HS.streak>=7)add('streak7');
+  if(pct===100)add('perfect');if(Object.values(HS.mastered).filter(v=>v>=3).length>=10)add('master10');
+  if(HS.modes&&HS.modes.length>=4)add('explorer');return got;
+}
+function hShowResults(pct,tot,newB){
+  hShowQS('hqresults');
+  const grade=pct>=90?'Uitstekend!':pct>=75?'Baie goed!':pct>=60?'Goeie poging!':pct>=40?'Oefen meer!':'Hersien en probeer weer!';
+  document.getElementById('hres-pct').textContent=pct+'%';
+  document.getElementById('hres-grade').textContent=grade+' — '+HQ.correct+' korrek uit '+tot;
+  const mast=Object.values(HS.mastered).filter(v=>v>=3).length;
+  document.getElementById('hres-bd').innerHTML='<div class="res-row"><span>Korrek</span><span class="rv-green">'+HQ.correct+'</span></div><div class="res-row"><span>Verkeerd</span><span class="rv-red">'+HQ.wrong+'</span></div><div class="res-row"><span>Sessies</span><span>'+HS.sessions+'</span></div><div class="res-row"><span>Dagreeks</span><span>'+HS.streak+' dag'+(HS.streak!==1?'e':'')+'</span></div><div class="res-row"><span>Terme bemeester</span><span>'+mast+' / '+HTERMS.length+'</span></div>';
+  const missed=document.getElementById('hres-missed');
+  if(HQ.missed.length>0){missed.innerHTML='<div class="missed-lbl">Terms to review ('+[...new Set(HQ.missed)].length+'):</div>'+[...new Set(HQ.missed)].map(m=>'<span class="missed-pill">'+m+'</span>').join('');}
+  else{missed.innerHTML='<div class="fb ok"><div class="fb-title">Geen gemiste terme — puik!</div></div>';}
+  const nb=document.getElementById('hres-newbadges');
+  if(newB.length>0){const defs=HBADGES.filter(b=>newB.includes(b.id));nb.innerHTML='<div class="fb ok"><div class="fb-title">New badge'+(defs.length>1?'s':'')+' earned!</div>'+defs.map(b=>b.icon+' '+b.label).join(' &nbsp; ')+'</div>';}else{nb.innerHTML='';}
+}
+function hRetryMissed(){if(HS.wrong.length<2){alert('Nog nie genoeg gemiste terme nie.');hGoHome();return;}document.getElementById('hq-topic').value='wrong';hStartQuiz();}
+function hGoHome(){hRefreshHome();hShowQS('hqhome');}
+
+
+// ══════════════════════════════════════
+//  ── EMS DATA ──
+// ══════════════════════════════════════
+const ETERMS=[
+  {t:"Economic Systems",tAf:"Ekonomiese Stelsels",en:"Economic system",af:"Ekonomiese stelsel",dEn:"A set of rules and structures a country uses to organise its production, distribution, and consumption of goods and services.",dAf:"'n Stel reëls en strukture wat 'n land gebruik om die produksie, verspreiding en verbruik van goedere en dienste te organiseer.",exam:true,key:false},
+  {t:"Economic Systems",tAf:"Ekonomiese Stelsels",en:"Planned (command) economy",af:"Beplande ekonomie",dEn:"An economic system in which the government makes ALL decisions about production, pricing, and distribution.",dAf:"'n Ekonomiese stelsel waar die regering ALLE besluite neem oor produksie, prysbepaling en verspreiding.",exam:true,key:true},
+  {t:"Economic Systems",tAf:"Ekonomiese Stelsels",en:"Market (free) economy",af:"Markekonomie / Vryemark ekonomie",dEn:"Prices and production are determined by supply and demand with minimal government interference.",dAf:"Pryse en produksie word deur vraag en aanbod bepaal met minimale regeringsinmenging.",exam:true,key:true},
+  {t:"Economic Systems",tAf:"Ekonomiese Stelsels",en:"Mixed economy",af:"Gemengde ekonomie",dEn:"Combines elements of both planned and market economies. South Africa uses a mixed economy.",dAf:"Kombineer elemente van beplande en markekonomieë. Suid-Afrika gebruik 'n gemengde ekonomie.",exam:true,key:true},
+  {t:"Economic Systems",tAf:"Ekonomiese Stelsels",en:"Characteristics of an economic system",af:"Kenmerke van 'n ekonomiese stelsel",dEn:"The specific features describing how a particular economic system operates — who sets prices, ownership rules, government role.",dAf:"Die spesifieke eienskappe wat beskryf hoe 'n bepaalde ekonomiese stelsel werk.",exam:true,key:false},
+  {t:"Economic Systems",tAf:"Ekonomiese Stelsels",en:"Globalisation",af:"Globalisering",dEn:"Countries become increasingly connected through trade, communication, and movement of goods and services across borders.",dAf:"Lande raak al meer verbind deur handel, kommunikasie en beweging van goedere en dienste oor grense.",exam:true,key:false},
+  {t:"Economic Systems",tAf:"Ekonomiese Stelsels",en:"Gross Domestic Product (GDP)",af:"Bruto Binnelandse Produk (BBP)",dEn:"Total value of all goods and services produced within a country in a specific period.",dAf:"Totale waarde van alle goedere en dienste binne 'n land gedurende 'n bepaalde tydperk geproduseer.",exam:true,key:false},
+  {t:"Circular Flow",tAf:"Ekonomiese Kringloop",en:"Circular flow",af:"Ekonomiese kringloop",dEn:"A model showing the continuous flow of goods, services, money, and factors of production between participants in an economy.",dAf:"'n Model wat die deurlopende vloei van goedere, dienste, geld en produksiefaktore tussen deelnemers in 'n ekonomie toon.",exam:true,key:true},
+  {t:"Circular Flow",tAf:"Ekonomiese Kringloop",en:"Closed economy",af:"Geslote ekonomie",dEn:"An economy that does not trade with other countries — only households, businesses, and government within the country.",dAf:"'n Ekonomie wat nie met ander lande handel dryf nie.",exam:true,key:false},
+  {t:"Circular Flow",tAf:"Ekonomiese Kringloop",en:"Households",af:"Huishoudings",dEn:"Participants who own factors of production and buy goods and services from businesses.",dAf:"Deelnemers wat produksiefaktore besit en goedere en dienste van besighede koop.",exam:true,key:false},
+  {t:"Circular Flow",tAf:"Ekonomiese Kringloop",en:"Businesses / Firms",af:"Besighede / Firmas",dEn:"Participants who use factors of production to produce goods and services for households and government.",dAf:"Deelnemers wat produksiefaktore gebruik om goedere en dienste vir huishoudings en die regering te produseer.",exam:true,key:false},
+  {t:"Circular Flow",tAf:"Ekonomiese Kringloop",en:"Government",af:"Regering",dEn:"Participant that collects taxes, provides public goods and services, and regulates the economy.",dAf:"Deelnemer wat belasting insamel, openbare goedere en dienste verskaf en die ekonomie reguleer.",exam:true,key:false},
+  {t:"Circular Flow",tAf:"Ekonomiese Kringloop",en:"Factors of production",af:"Produksiefaktore",dEn:"Resources used to produce goods and services: land, labour, capital, and entrepreneurship.",dAf:"Hulpbronne gebruik om goedere en dienste te produseer: grond, arbeid, kapitaal en entrepreneurskap.",exam:true,key:true},
+  {t:"Circular Flow",tAf:"Ekonomiese Kringloop",en:"Factor market (resource market)",af:"Faktormark (hulpbronmark)",dEn:"The market where factors of production are bought and sold — households sell, businesses buy.",dAf:"Die mark waar produksiefaktore gekoop en verkoop word.",exam:true,key:true},
+  {t:"Circular Flow",tAf:"Ekonomiese Kringloop",en:"Goods and services market",af:"Goedere- en dienste-mark",dEn:"The market where businesses sell finished goods and services to households and government.",dAf:"Die mark waar besighede afgewerkte goedere en dienste aan huishoudings en die regering verkoop.",exam:true,key:false},
+  {t:"Circular Flow",tAf:"Ekonomiese Kringloop",en:"Real flow",af:"Reële vloei",dEn:"The physical movement of goods, services, and factors of production (non-money flows) between participants.",dAf:"Die fisiese beweging van goedere, dienste en produksiefaktore (nie-geldvloei) tussen deelnemers.",exam:true,key:false},
+  {t:"Circular Flow",tAf:"Ekonomiese Kringloop",en:"Money flow",af:"Geldvloei",dEn:"The movement of money — wages, payments, and taxes — between participants in the circular flow.",dAf:"Die beweging van geld — lone, betalings en belasting — tussen deelnemers in die kringloop.",exam:true,key:false},
+  {t:"Circular Flow",tAf:"Ekonomiese Kringloop",en:"Direct tax",af:"Direkte belasting",dEn:"Tax paid directly on income or profit, e.g. income tax and property tax.",dAf:"Belasting direk op inkomste of wins betaal, bv. inkomstebelasting en eiendomsbelasting.",exam:true,key:false},
+  {t:"Circular Flow",tAf:"Ekonomiese Kringloop",en:"Indirect tax",af:"Indirekte belasting",dEn:"Tax added to the price of goods and services, e.g. VAT.",dAf:"Belasting by die prys van goedere en dienste gevoeg, bv. BTW.",exam:true,key:false},
+  {t:"Journals & GL",tAf:"Joernale en Grootboek",en:"Cash Receipts Journal (CRJ)",af:"Kontantontvangstejoernaal (KOJ)",dEn:"Subsidiary journal recording ALL money received by the business, e.g. cash sales and debtor receipts.",dAf:"Hulpjoernaal wat ALLE geld ontvang deur die besigheid rekord, bv. kontantverkope en debiteurontvangste.",exam:true,key:true},
+  {t:"Journals & GL",tAf:"Joernale en Grootboek",en:"Cash Payments Journal (CPJ)",af:"Kontantbetalingsjoernaal (KBJ)",dEn:"Subsidiary journal recording ALL money paid out by the business, e.g. stock purchases and wages.",dAf:"Hulpjoernaal wat ALLE geld uitbetaal deur die besigheid rekord, bv. voorraadaankope en lone.",exam:true,key:true},
+  {t:"Journals & GL",tAf:"Joernale en Grootboek",en:"General Ledger",af:"Algemene Grootboek",dEn:"The main book of accounts where all transactions are posted from subsidiary journals in T-account format.",dAf:"Die hoofboek van rekeninge waar alle transaksies vanuit hulpjoernale in T-rekeningformaat oorgedra word.",exam:true,key:true},
+  {t:"Journals & GL",tAf:"Joernale en Grootboek",en:"Trial Balance",af:"Proefbalans",dEn:"Lists all debit and credit balances from the General Ledger to verify the double-entry principle.",dAf:"Lys alle debet- en kredietbalanse uit die Algemene Grootboek om die dubbelinskrywingsbeginsel te toets.",exam:true,key:true},
+  {t:"Journals & GL",tAf:"Joernale en Grootboek",en:"Double-entry principle",af:"Dubbelinskrywingsbeginsel",dEn:"Every transaction is recorded twice — once as a debit and once as an equal credit.",dAf:"Elke transaksie word twee keer gerekord — een keer as 'n debiet en een keer as 'n gelyke krediet.",exam:true,key:true},
+  {t:"Journals & GL",tAf:"Joernale en Grootboek",en:"Accounting equation",af:"Rekeningkundige vergelyking",dEn:"Assets = Owner's Equity + Liabilities. Every transaction must keep this equation balanced.",dAf:"Bates = Eienaarsbelang + Laste. Elke transaksie moet hierdie vergelyking gebalanseer hou.",exam:true,key:true},
+  {t:"Journals & GL",tAf:"Joernale en Grootboek",en:"Assets (A)",af:"Bates (B)",dEn:"Everything of value the business owns, e.g. cash, trading stock, equipment, and buildings.",dAf:"Alles van waarde wat die besigheid besit, bv. kontant, handelsvoorraad, toerusting en geboue.",exam:true,key:true},
+  {t:"Journals & GL",tAf:"Joernale en Grootboek",en:"Owner's equity (OE)",af:"Eienaarsbelang (EB)",dEn:"The owner's financial interest: Capital + Income − Expenses − Drawings.",dAf:"Die eienaar se finansiële belang: Kapitaal + Inkomste − Uitgawes − Onttrekkings.",exam:true,key:true},
+  {t:"Journals & GL",tAf:"Joernale en Grootboek",en:"Liability (L)",af:"Las (L)",dEn:"A debt the business owes to an outside party, e.g. a bank loan or bank overdraft.",dAf:"'n Skuld wat die besigheid aan 'n buiteparty verskuldig is, bv. 'n banklening of oortrokke bank.",exam:true,key:true},
+  {t:"Journals & GL",tAf:"Joernale en Grootboek",en:"Capital",af:"Kapitaal",dEn:"Money or assets invested in the business by the owner at the start or over time.",dAf:"Geld of bates deur die eienaar in die besigheid belê by die begin of mettertyd.",exam:true,key:false},
+  {t:"Journals & GL",tAf:"Joernale en Grootboek",en:"Drawings",af:"Onttrekkings",dEn:"Money or goods taken from the business by the owner for personal use — reduces owner's equity.",dAf:"Geld of goedere deur die eienaar vir persoonlike gebruik geneem — verminder eienaarsbelang.",exam:true,key:false},
+  {t:"Journals & GL",tAf:"Joernale en Grootboek",en:"Fixed asset",af:"Vaste bate",dEn:"Long-term asset NOT bought to resell quickly, e.g. equipment, vehicles, buildings.",dAf:"Langtermynbate NIE aangekoop om vinnig te herverkoop nie, bv. toerusting, voertuie, geboue.",exam:true,key:false},
+  {t:"Journals & GL",tAf:"Joernale en Grootboek",en:"Current asset",af:"Bedryfsbate / Lopende bate",dEn:"Short-term asset convertible to cash within one year, e.g. trading stock, debtors, bank.",dAf:"Korttermynbate binne een jaar na kontant omskakelbaar, bv. handelsvoorraad, debiteure, bank.",exam:true,key:false},
+  {t:"Journals & GL",tAf:"Joernale en Grootboek",en:"Debit (Dr)",af:"Debiet (Dt)",dEn:"Entry on the LEFT side of a T-account. Assets and expenses increase on the debit side.",dAf:"Inskrywing aan die LINKERKANT van 'n T-rekening. Bates en uitgawes neem toe aan die debetkant.",exam:true,key:false},
+  {t:"Journals & GL",tAf:"Joernale en Grootboek",en:"Credit (Cr)",af:"Krediet (Kt)",dEn:"Entry on the RIGHT side of a T-account. Liabilities, owner's equity, and income increase on the credit side.",dAf:"Inskrywing aan die REGTERKANT van 'n T-rekening. Laste, eienaarsbelang en inkomste neem toe.",exam:true,key:false},
+  {t:"Journals & GL",tAf:"Joernale en Grootboek",en:"Source document",af:"Brondokument",dEn:"Original written proof of a transaction, e.g. invoice, receipt, EFT, bank statement.",dAf:"Oorspronklike geskrewe bewys van 'n transaksie, bv. faktuur, kwitansie, EFO, bankstaat.",exam:true,key:false},
+  {t:"Journals & GL",tAf:"Joernale en Grootboek",en:"Mark-up",af:"Opslag",dEn:"Percentage added to cost price to calculate selling price, e.g. 50% mark-up on R100 cost = R150 selling price.",dAf:"Persentasie by kosprys gevoeg om verkoopprys te bereken, bv. 50% opslag op R100 = R150 verkoopprys.",exam:true,key:true},
+  {t:"Journals & GL",tAf:"Joernale en Grootboek",en:"Trading stock",af:"Handelsvoorraad",dEn:"Goods bought by the business to resell at a profit.",dAf:"Goedere deur die besigheid aangekoop om teen wins te herverkoop.",exam:true,key:false},
+  {t:"Journals & GL",tAf:"Joernale en Grootboek",en:"Accounting cycle",af:"Rekeningkundige siklus",dEn:"Full sequence: source document → subsidiary journal → General Ledger → Trial Balance.",dAf:"Volledige reeks: brondokument → hulpjoernaal → Algemene Grootboek → Proefbalans.",exam:true,key:false},
+  {t:"Credit Transactions",tAf:"Krediettransaksies",en:"Credit transaction",af:"Krediettransaksie",dEn:"Goods or services received now but payment is made at a later agreed date.",dAf:"Goedere of dienste word nou ontvang maar betaling word op 'n later ooreengekome datum gemaak.",exam:true,key:false},
+  {t:"Credit Transactions",tAf:"Krediettransaksies",en:"Debtor",af:"Debiteur",dEn:"A person or business that owes money because they bought goods or services on credit.",dAf:"'n Persoon of besigheid wat geld verskuldig is omdat hulle goedere of dienste op krediet gekoop het.",exam:true,key:true},
+  {t:"Credit Transactions",tAf:"Krediettransaksies",en:"Credit sales",af:"Kredietverkope",dEn:"Sales where the buyer agrees to pay at a later date rather than immediately.",dAf:"Verkope waar die koper instem om op 'n later datum te betaal.",exam:true,key:false},
+  {t:"Credit Transactions",tAf:"Krediettransaksies",en:"National Credit Act (NCA)",af:"Nasionale Kredietwet (NKW)",dEn:"South African law protecting both consumer and business in credit transactions by regulating credit agreements.",dAf:"Suid-Afrikaanse wet wat beide verbruiker en besigheid in krediettransaksies beskerm.",exam:true,key:true},
+  {t:"Credit Transactions",tAf:"Krediettransaksies",en:"Debtors Journal (DJ)",af:"Debiteurejoernaal (DJ)",dEn:"Subsidiary journal recording all credit sales. Source document: duplicate invoice.",dAf:"Hulpjoernaal wat alle kredietverkope rekord. Brondokument: duplikaatfaktuur.",exam:true,key:true},
+  {t:"Credit Transactions",tAf:"Krediettransaksies",en:"Debtors Allowance Journal (DAJ)",af:"Debiteuretoelaagjoernaal (DTJ)",dEn:"Subsidiary journal recording goods returned by debtors or discounts granted after credit sales.",dAf:"Hulpjoernaal wat goedere teruggestuur deur debiteure of afslag na kredietverkope rekord.",exam:true,key:false},
+  {t:"Credit Transactions",tAf:"Krediettransaksies",en:"Invoice (duplicate invoice)",af:"Faktuur (duplikaatfaktuur)",dEn:"Source document listing goods sold, quantities, and amounts. Duplicate kept as proof for the Debtors Journal.",dAf:"Brondokument wat goedere, hoeveelhede en bedrae lys. Duplikaat gehou as bewys vir die Debiteurejoernaal.",exam:true,key:true},
+  {t:"Price Theory",tAf:"Prysteorie",en:"Demand",af:"Vraag",dEn:"The quantity of a good consumers are WILLING and ABLE to buy at various prices in a specific period.",dAf:"Die hoeveelheid van 'n goed wat verbruikers BEREID en IN STAAT is om teen verskillende pryse te koop.",exam:true,key:true},
+  {t:"Price Theory",tAf:"Prysteorie",en:"Law of demand",af:"Wet van vraag",dEn:"As price INCREASES, quantity demanded DECREASES (inverse relationship), all else constant.",dAf:"Soos prys TOENEEM, neem hoeveelheid gevra AF (omgekeerde verhouding).",exam:true,key:true},
+  {t:"Price Theory",tAf:"Prysteorie",en:"Supply",af:"Aanbod",dEn:"The quantity of a good producers are WILLING and ABLE to offer at various prices in a specific period.",dAf:"Die hoeveelheid van 'n goed wat vervaardigers BEREID en IN STAAT is om teen verskillende pryse aan te bied.",exam:true,key:true},
+  {t:"Price Theory",tAf:"Prysteorie",en:"Law of supply",af:"Wet van aanbod",dEn:"As price INCREASES, quantity supplied INCREASES (direct relationship), all else constant.",dAf:"Soos prys TOENEEM, neem hoeveelheid aangebied TOE (direkte verhouding).",exam:true,key:true},
+  {t:"Price Theory",tAf:"Prysteorie",en:"Demand curve",af:"Vraagkurwe",dEn:"A DOWNWARD-SLOPING graph showing the inverse relationship between price and quantity demanded. Labelled 'V' on Afrikaans graphs.",dAf:"'n AFWAARTSE grafiek wat die omgekeerde verhouding tussen prys en hoeveelheid gevra toon. Op Afrikaanse grafieke as 'V' aangedui.",exam:true,key:true},
+  {t:"Price Theory",tAf:"Prysteorie",en:"Supply curve",af:"Aanbodkurwe",dEn:"An UPWARD-SLOPING graph showing the positive relationship between price and quantity supplied. Labelled 'A' on Afrikaans graphs.",dAf:"'n OPWAARTSE grafiek wat die positiewe verhouding tussen prys en hoeveelheid aangebied toon. Op Afrikaanse grafieke as 'A' aangedui.",exam:true,key:true},
+  {t:"Price Theory",tAf:"Prysteorie",en:"Equilibrium price",af:"Ewewigsprys",dEn:"The price where quantity demanded equals quantity supplied — no shortage or surplus. Where demand and supply curves cross.",dAf:"Die prys waar hoeveelheid gevra gelyk is aan hoeveelheid aangebied. Waar vraag- en aanbodkurwes kruis.",exam:true,key:true},
+  {t:"Price Theory",tAf:"Prysteorie",en:"Equilibrium point",af:"Ewewigspunt",dEn:"The point on a graph where the demand and supply curves intersect. Labelled 'E'.",dAf:"Die punt op 'n grafiek waar die vraag- en aanbodkurwes mekaar sny. As 'E' aangedui.",exam:true,key:true},
+  {t:"Price Theory",tAf:"Prysteorie",en:"Substitute good",af:"Substituutproduk",dEn:"A good that can replace another because it serves the same purpose, e.g. Xbox as substitute for PlayStation.",dAf:"'n Goed wat 'n ander kan vervang omdat dit dieselfde doel dien.",exam:true,key:false},
+  {t:"Price Theory",tAf:"Prysteorie",en:"Complementary good",af:"Komplementêre produk",dEn:"A good used together with another, e.g. game controllers are complementary to a console.",dAf:"'n Goed wat saam met 'n ander gebruik word.",exam:true,key:false},
+  {t:"Sectors",tAf:"Sektore van die Ekonomie",en:"Primary sector",af:"Primêre sektor",dEn:"Extracts or harvests raw materials directly from nature: farming, mining, fishing, forestry.",dAf:"Ontgin of oes rou materiale direk uit die natuur: landbou, mynbou, vissery, bosbou.",exam:true,key:true},
+  {t:"Sectors",tAf:"Sektore van die Ekonomie",en:"Secondary sector",af:"Sekondêre sektor",dEn:"Processes or manufactures raw materials into finished goods, e.g. factories and construction.",dAf:"Verwerk of vervaardig rou materiale in finale goedere, bv. fabrieke en konstruksie.",exam:true,key:true},
+  {t:"Sectors",tAf:"Sektore van die Ekonomie",en:"Tertiary sector",af:"Tersiêre sektor",dEn:"Provides services rather than physical goods: banking, transport, teaching, retail, health care.",dAf:"Verskaf dienste eerder as fisiese goedere: bankwese, vervoer, onderwys, kleinhandel, gesondheidsorg.",exam:true,key:true},
+  {t:"Sectors",tAf:"Sektore van die Ekonomie",en:"Interrelationship of the three sectors",af:"Onderlinge verband van die drie sektore",dEn:"Sectors depend on each other: primary supplies raw materials → secondary manufactures → tertiary distributes and supports.",dAf:"Sektore staatmaak op mekaar: primêr verskaf rou materiale → sekondêr vervaardig → tersiêr versprei.",exam:true,key:true},
+  {t:"Sectors",tAf:"Sektore van die Ekonomie",en:"Sustainable use of resources",af:"Volhoubare gebruik van hulpbronne",dEn:"Using natural resources responsibly so they are not depleted for future generations.",dAf:"Verantwoordelike gebruik van natuurlike hulpbronne sodat dit nie vir toekomstige geslagte uitgeput word nie.",exam:true,key:false},
+  {t:"Sectors",tAf:"Sektore van die Ekonomie",en:"Unskilled worker",af:"Ongeskoolde werker",dEn:"Worker requiring no specialised training, mostly found in the primary sector.",dAf:"Werker wat geen gespesialiseerde opleiding benodig nie, hoofsaaklik in die primêre sektor.",exam:true,key:false},
+  {t:"Sectors",tAf:"Sektore van die Ekonomie",en:"Semi-skilled worker",af:"Semigeskoolde werker",dEn:"Worker with some training for a specific job type, often supervisory or production roles.",dAf:"Werker met 'n mate van opleiding vir 'n spesifieke soort werk.",exam:true,key:false},
+  {t:"Sectors",tAf:"Sektore van die Ekonomie",en:"Skilled worker",af:"Geskoolde werker",dEn:"Worker with specialised qualifications and training, predominantly in the tertiary sector.",dAf:"Werker met gespesialiseerde kwalifikasies en opleiding, hoofsaaklik in die tersiêre sektor.",exam:true,key:false},
+  {t:"Exam Language",tAf:"Eksamenstaal",en:"Name / State (Noem)",af:"Noem",dEn:"Give a word or fact WITHOUT any explanation. One word or phrase is sufficient.",dAf:"Gee 'n woord of feit SONDER enige verduideliking. Een woord of frase is voldoende.",exam:true,key:true},
+  {t:"Exam Language",tAf:"Eksamenstaal",en:"Define (Definieer)",af:"Definieer",dEn:"Give the exact formal meaning in a FULL SENTENCE.",dAf:"Gee die presiese formele betekenis in 'n VOLSIN.",exam:true,key:true},
+  {t:"Exam Language",tAf:"Eksamenstaal",en:"Explain (Verduidelik)",af:"Verduidelik",dEn:"Give reasons or details of HOW or WHY — more than a simple definition.",dAf:"Gee redes of besonderhede oor HOE of WAAROM — meer as 'n eenvoudige definisie.",exam:true,key:true},
+  {t:"Exam Language",tAf:"Eksamenstaal",en:"Describe (Beskryf)",af:"Beskryf",dEn:"Give the main features or characteristics in your own words.",dAf:"Gee die hoofkenmerke of eienskappe in jou eie woorde.",exam:true,key:false},
+  {t:"Exam Language",tAf:"Eksamenstaal",en:"Discuss (Bespreek)",af:"Bespreek",dEn:"Detailed answer covering SEVERAL aspects: reasons, examples, and implications.",dAf:"Gedetailleerde antwoord wat VERSKEIE aspekte dek: redes, voorbeelde en implikasies.",exam:true,key:true},
+  {t:"Exam Language",tAf:"Eksamenstaal",en:"Compare (Vergelyk)",af:"Vergelyk",dEn:"Show BOTH similarities AND differences — never just one.",dAf:"Toon BEIDE ooreenkomste EN verskille — nooit net een nie.",exam:true,key:false},
+  {t:"Exam Language",tAf:"Eksamenstaal",en:"Motivate / Give a reason (Motiveer)",af:"Motiveer",dEn:"Give reasons or evidence to SUPPORT a statement. Back up with specific facts.",dAf:"Gee redes of bewyse om 'n stelling te ONDERSTEUN. Rugsteun met spesifieke feite.",exam:true,key:false},
+  {t:"Exam Language",tAf:"Eksamenstaal",en:"Calculate (Bereken)",af:"Bereken",dEn:"Work out a numerical answer and SHOW ALL working steps. Never write only the final answer.",dAf:"Bereken 'n numeriese antwoord en TOON ALLE bewerkingstappe. Skryf nooit slegs die finale antwoord nie.",exam:true,key:true},
+  {t:"Exam Language",tAf:"Eksamenstaal",en:"Analyse (Ontleed)",af:"Ontleed",dEn:"Break into parts and explain how they relate to each other or to the whole.",dAf:"Breek in dele op en verduidelik hoe die dele met mekaar of die geheel verband hou.",exam:true,key:false},
+];
+const ETOPICS=["All","Economic Systems","Circular Flow","Journals & GL","Credit Transactions","Price Theory","Sectors","Exam Language"];
+
+// ══════════════════════════════════════
+//  ── EMS GLOSSARY ──
+// ══════════════════════════════════════
+let eglT='all', eglP='all', eglCards=[];
+function buildEmsGlossary(){
+  document.getElementById('eg-total').textContent=ETERMS.length;
+  document.getElementById('eg-key').textContent=ETERMS.filter(t=>t.key).length;
+  eglRender();
+}
+function eglTopic(t,el){eglT=t;document.querySelectorAll('#egl-tabs .tab').forEach(b=>b.classList.remove('on'));el.classList.add('on');document.getElementById('egl-search').value='';eglRender();}
+function eglPri(p,el){eglP=p;document.querySelectorAll('#ems-page-glossary .ptab').forEach(b=>b.className='ptab');el.className='ptab '+(p==='key'?'on-key':p==='exam'?'on-exam':'on-all');document.getElementById('egl-search').value='';eglRender();}
+function eglFilter(){eglT='all';eglP='all';document.querySelectorAll('#egl-tabs .tab').forEach(b=>b.classList.remove('on'));document.querySelectorAll('#egl-tabs .tab')[0].classList.add('on');document.querySelectorAll('#ems-page-glossary .ptab').forEach(b=>b.className='ptab');document.getElementById('ept-all').className='ptab on-all';eglRender();}
+function eglRender(){
+  const q=document.getElementById('egl-search').value.toLowerCase().trim();
+  const filtered=ETERMS.filter(term=>{
+    const tm=eglT==='all'||term.t===eglT;
+    const pm=eglP==='all'||(eglP==='key'&&term.key)||(eglP==='exam'&&term.exam);
+    const sm=!q||term.en.toLowerCase().includes(q)||term.af.toLowerCase().includes(q)||term.dEn.toLowerCase().includes(q)||term.dAf.toLowerCase().includes(q);
+    return tm&&pm&&sm;
+  });
+  const out=document.getElementById('egl-content');
+  if(!filtered.length){out.innerHTML='<div style="text-align:center;padding:3rem 1rem;color:var(--ink3)">Geen terme gevind nie.</div>';document.getElementById('egl-count').textContent='0 van '+ETERMS.length+' terme';return;}
+  const byTopic={};
+  filtered.forEach(t=>{if(!byTopic[t.t])byTopic[t.t]=[];byTopic[t.t].push(t);});
+  out.innerHTML=''; eglCards=[];
+  Object.entries(byTopic).forEach(([topic,terms])=>{
+    const section=document.createElement('div'); section.className='gl-section'; section.dataset.tab=topic;
+    const hdr=document.createElement('div'); hdr.className='sec-hdr';
+    hdr.innerHTML='<span class="sec-title">'+terms[0].tAf+'</span><span class="sec-af">— '+topic+'</span><span class="sec-count">'+terms.length+' terme</span>';
+    const grid=document.createElement('div'); grid.className='term-grid';
+    terms.forEach((term)=>{
+      const bC=term.key?'gkey':term.exam?'gexam':'';
+      const card=document.createElement('div');
+      card.className='gcard'+(bC?' '+bC:''); card.id='';
+      // HEAD
+      const head=document.createElement('div'); head.className='gcard-head';
+      head.addEventListener('click',()=>egToggle(card));
+      const termsDiv=document.createElement('div'); termsDiv.className='gcard-terms';
+      const afT=document.createElement('div'); afT.className='gcard-af'; afT.textContent=term.af;
+      const enT=document.createElement('div'); enT.className='gcard-en'; enT.textContent=term.en;
+      termsDiv.appendChild(afT); termsDiv.appendChild(enT);
+      const right=document.createElement('div'); right.className='gcard-right';
+      if(term.key){const b=document.createElement('span');b.className='pbadge pbkey';b.textContent='★ Moet ken';right.appendChild(b);}
+      if(term.exam){const b=document.createElement('span');b.className='pbadge pbexam';b.textContent='📋 Eksamen';right.appendChild(b);}
+      const toggle=document.createElement('div'); toggle.className='gtoggle'; toggle.textContent='▼';
+      head.appendChild(termsDiv); head.appendChild(right); head.appendChild(toggle);
+      // BODY
+      const body=document.createElement('div'); body.className='gcard-body';
+      const defRow=document.createElement('div'); defRow.className='def-row';
+      const afCol=document.createElement('div'); afCol.className='def-col af';
+      const afLang=document.createElement('div'); afLang.className='def-lang'; afLang.textContent='Afrikaans';
+      afCol.appendChild(afLang); afCol.appendChild(document.createTextNode(term.dAf));
+      const enCol=document.createElement('div'); enCol.className='def-col en';
+      const enLang=document.createElement('div'); enLang.className='def-lang'; enLang.textContent='Engels';
+      enCol.appendChild(enLang); enCol.appendChild(document.createTextNode(term.dEn));
+      defRow.appendChild(afCol); defRow.appendChild(enCol);
+      body.appendChild(defRow);
+      card.appendChild(head); card.appendChild(body);
+      grid.appendChild(card); eglCards.push(card);
+    });
+    section.appendChild(hdr); section.appendChild(grid);
+    out.appendChild(section);
+  });
+  document.getElementById('egl-count').textContent=filtered.length+' van '+ETERMS.length+' terme';
+}
+function egToggle(card){
+  const open=card.classList.toggle('open');
+  const arr=card.querySelector('.gtoggle');
+  if(arr)arr.textContent=open?'▲':'▼';
+}
+
+// ══════════════════════════════════════
+//  ── EMS QUIZ ──
+// ══════════════════════════════════════
+const EBADGES=[
+  {id:'first',icon:'⭐',label:'Eerste sessie'},
+  {id:'streak3',icon:'🔥',label:'3-dag reeks'},
+  {id:'streak7',icon:'🏆',label:'7-dag reeks'},
+  {id:'perfect',icon:'💯',label:'Perfekte telling'},
+  {id:'master10',icon:'✅',label:'10 bemeester'},
+  {id:'allModes',icon:'🎯',label:'Alle modi'},
+];
+let ES=eLoadS(), EQ={mode:'mc'};
+function eLoadS(){try{const r=localStorage.getItem('gr9ems_v1');if(r){const p=JSON.parse(r);if(p.best===undefined)p.best=null;return p;}}catch(e){}return{sessions:0,best:null,streak:0,lastDate:null,mastered:{},wrong:[],badges:[],modes:[]};}
+function eSaveS(){try{localStorage.setItem('gr9ems_v1',JSON.stringify(ES));}catch(e){}}
+function eRefreshHome(){
+  document.getElementById('es-sess').textContent=ES.sessions;
+  document.getElementById('es-best').textContent=ES.best!==null?ES.best+'%':'—';
+  document.getElementById('es-streak').textContent=ES.streak;
+  document.getElementById('es-mast').textContent=Object.keys(ES.mastered).filter(k=>ES.mastered[k]>=3).length;
+  const row=document.getElementById('e-badges-row'); row.innerHTML='';
+  EBADGES.forEach(b=>{const el=document.createElement('div');el.className='bchip'+(ES.badges.includes(b.id)?' earned':'');el.innerHTML=b.icon+' '+b.label;row.appendChild(el);});
+}
+function ePickMode(m,el){document.querySelectorAll('#eqhome .mcard').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');EQ.mode=m;}
+function eGetPool(){
+  const t=document.getElementById('eq-topic').value;
+  if(t==='wrong'){const wt=ES.wrong||[];const r=ETERMS.filter(x=>wt.includes(x.en));return r.length>=4?r:ETERMS;}
+  if(t==='key')return ETERMS.filter(x=>x.key);
+  return t==='all'?ETERMS:ETERMS.filter(x=>x.t===t);
+}
+function eBuildQs(pool,dir,n){
+  const dirs=['en-af','af-en','def-en','def-af'];
+  const sh=[...pool].sort(()=>Math.random()-.5);
+  const lim=n>=999?sh.length:Math.min(n,sh.length);
+  const qs=[];
+  for(let i=0;i<lim;i++){
+    const t=sh[i%sh.length];
+    const d=dir==='mix'?dirs[Math.floor(Math.random()*dirs.length)]:dir;
+    let prompt,answer,dirLabel;
+    if(d==='en-af'){prompt=t.en;answer=t.af;dirLabel='Wat is die Afrikaans vir:';}
+    else if(d==='af-en'){prompt=t.af;answer=t.en;dirLabel='Wat is die Engels vir:';}
+    else if(d==='def-en'){prompt=t.dEn;answer=t.en;dirLabel='Noem die term (Engels) beskryf:';}
+    else{prompt=t.dAf;answer=t.af;dirLabel='Noem die term (Afrikaans) beskryf:';}
+    qs.push({term:t,prompt,answer,dirLabel,d});
+  }
+  return qs;
+}
+function eUpdateStreak(){const today=new Date().toDateString();if(ES.lastDate===today)return;const yest=new Date(Date.now()-86400000).toDateString();ES.streak=ES.lastDate===yest?ES.streak+1:1;ES.lastDate=today;}
+function eStartQuiz(){
+  const pool=eGetPool();if(pool.length<2){alert("Nie genoeg terme nie. Kies \u2018n breër filter.");return;}
+  const dir=document.getElementById('eq-dir').value;
+  const n=parseInt(document.getElementById('eq-count').value);
+  const mode=EQ.mode||'mc';
+  EQ={mode,pool,dir,n,qs:eBuildQs(pool,dir,n),idx:0,correct:0,wrong:0,missed:[]};
+  eUpdateStreak();if(!ES.modes)ES.modes=[];if(!ES.modes.includes(mode))ES.modes.push(mode);
+  eShowQS(mode==='mc'?'eqmc':mode==='flash'?'eqflash':mode==='type'?'eqtype':'eqmatch');
+  if(mode==='mc')eRenderMC();else if(mode==='flash')eRenderFlash();else if(mode==='type')eRenderType();else eInitMatch();
+}
+function eShowQS(id){document.querySelectorAll('#ems-page-quiz .qscreen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+// MC
+function eRenderMC(){
+  const q=EQ.qs[EQ.idx],tot=EQ.qs.length;
+  document.getElementById('emc-prog').style.width=Math.round(EQ.idx/tot*100)+'%';
+  document.getElementById('emc-num').textContent='Vraag '+(EQ.idx+1)+' van '+tot;
+  document.getElementById('emc-sc').textContent=EQ.correct+' korrek';
+  document.getElementById('emc-pill').textContent=q.term.t;
+  document.getElementById('emc-dir').textContent=q.dirLabel;
+  document.getElementById('emc-prompt').textContent=q.prompt;
+  document.getElementById('emc-fb').innerHTML='';
+  document.getElementById('emc-next').style.display='none';
+  const opts=[q.answer,...EQ.pool.filter(t=>t!==q.term).sort(()=>Math.random()-.5).slice(0,3).map(t=>q.d==='en-af'?t.af:q.d==='af-en'?t.en:q.d==='def-en'?t.en:t.af)].slice(0,4).sort(()=>Math.random()-.5);
+  const grid=document.getElementById('emc-opts'); grid.innerHTML='';
+  opts.forEach(o=>{const b=document.createElement('button');b.className='mc-opt';b.textContent=o;b.onclick=()=>eCheckMC(b,o,q);grid.appendChild(b);});
+}
+function eCheckMC(btn,chosen,q){
+  document.querySelectorAll('#eqmc .mc-opt').forEach(b=>b.disabled=true);
+  const ok=eNorm(chosen)===eNorm(q.answer);
+  btn.classList.add(ok?'mc-ok':'mc-bad');
+  if(ok){EQ.correct++;eMark(q.term.en,true);document.getElementById('emc-fb').innerHTML='<div class="fb ok"><div class="fb-title">Korrek!</div></div>';}
+  else{EQ.wrong++;EQ.missed.push(q.term.en);eMark(q.term.en,false);document.querySelectorAll('#eqmc .mc-opt').forEach(b=>{if(eNorm(b.textContent)===eNorm(q.answer))b.classList.add('mc-show');});document.getElementById('emc-fb').innerHTML='<div class="fb bad"><div class="fb-title">Nie reg nie.</div>Antwoord: <strong>'+q.answer+'</strong></div>';}
+  document.getElementById('emc-sc').textContent=EQ.correct+' korrek';
+  document.getElementById('emc-next').style.display='inline-block';
+}
+function eNextQ(mode){EQ.idx++;if(EQ.idx>=EQ.qs.length){eEndQuiz();return;}if(mode==='mc')eRenderMC();else eRenderType();}
+// FLASH
+function eRenderFlash(){
+  const q=EQ.qs[EQ.idx],tot=EQ.qs.length;
+  document.getElementById('efl-prog').style.width=Math.round(EQ.idx/tot*100)+'%';
+  document.getElementById('efl-num').textContent='Kaart '+(EQ.idx+1)+' van '+tot;
+  document.getElementById('efl-sc').textContent=EQ.correct+' geweet';
+  document.getElementById('efl-pill').textContent=q.term.t;
+  document.getElementById('efl-dir').textContent=q.dirLabel;
+  document.getElementById('efl-prompt').textContent=q.prompt;
+  document.getElementById('efl-af').textContent=q.d.startsWith('def')?q.term.af:q.term.dAf;
+  document.getElementById('efl-en').textContent=q.d.startsWith('def')?q.answer:q.term.dEn;
+  document.getElementById('e-flip-front').style.display='';
+  document.getElementById('e-flip-back').style.display='none';
+  document.getElementById('e-flip-acts').style.display='none';
+}
+function eDoFlip(){document.getElementById('e-flip-front').style.display='none';document.getElementById('e-flip-back').style.display='block';document.getElementById('e-flip-acts').style.display='flex';}
+function eFlashRate(knew){const q=EQ.qs[EQ.idx];if(knew){EQ.correct++;eMark(q.term.en,true);}else{EQ.wrong++;EQ.missed.push(q.term.en);eMark(q.term.en,false);}document.getElementById('efl-sc').textContent=EQ.correct+' geweet';EQ.idx++;if(EQ.idx>=EQ.qs.length){eEndQuiz();return;}eRenderFlash();}
+// TYPE
+function eRenderType(){
+  const q=EQ.qs[EQ.idx],tot=EQ.qs.length;
+  document.getElementById('ety-prog').style.width=Math.round(EQ.idx/tot*100)+'%';
+  document.getElementById('ety-num').textContent='Vraag '+(EQ.idx+1)+' van '+tot;
+  document.getElementById('ety-sc').textContent=EQ.correct+' korrek';
+  document.getElementById('ety-pill').textContent=q.term.t;
+  document.getElementById('ety-dir').textContent=q.dirLabel;
+  document.getElementById('ety-prompt').textContent=q.prompt;
+  const inp=document.getElementById('e-type-inp');inp.value='';inp.disabled=false;inp.className='type-input';
+  document.getElementById('ety-fb').innerHTML='';
+  document.getElementById('ety-check').style.display='inline-block';
+  document.getElementById('ety-next').style.display='none';
+  inp.focus();
+}
+function eSubmitType(){
+  const q=EQ.qs[EQ.idx];const inp=document.getElementById('e-type-inp');const val=inp.value.trim();if(!val)return;
+  inp.disabled=true;document.getElementById('ety-check').style.display='none';document.getElementById('ety-next').style.display='inline-block';
+  const alts=q.answer.split('/').map(s=>eNorm(s.trim()));
+  const ok=alts.includes(eNorm(val))||(val.length>=3&&alts.some(a=>a.includes(eNorm(val))));
+  inp.classList.add(ok?'t-ok':'t-bad');
+  if(ok){EQ.correct++;eMark(q.term.en,true);document.getElementById('ety-fb').innerHTML='<div class="fb ok"><div class="fb-title">Korrek!</div></div>';}
+  else{EQ.wrong++;EQ.missed.push(q.term.en);eMark(q.term.en,false);document.getElementById('ety-fb').innerHTML='<div class="fb bad"><div class="fb-title">Nie reg nie.</div>Antwoord: <strong>'+q.answer+'</strong></div>';}
+  document.getElementById('ety-sc').textContent=EQ.correct+' korrek';
+}
+// MATCH
+let EM={};
+function eInitMatch(){EQ.correct=0;EQ.wrong=0;EM={round:0,total:0,selL:null,selR:null};eLoadMR();}
+function eLoadMR(){
+  const pool=[...EQ.pool].sort(()=>Math.random()-.5).slice(0,6);
+  EM.pool=pool;EM.pairs=0;EM.selL=null;EM.selR=null;EM.total+=pool.length;
+  const lL=[...pool].sort(()=>Math.random()-.5);const lR=[...pool].sort(()=>Math.random()-.5);
+  document.getElementById('ema-num').textContent='Rondte '+(EM.round+1);
+  document.getElementById('ema-sc').textContent=EQ.correct+' gekoppel';
+  document.getElementById('ema-prog').style.width='0%';
+  document.getElementById('ema-fb').innerHTML='';document.getElementById('ema-next').style.display='none';
+  const lDiv=document.getElementById('ema-left');lDiv.innerHTML='';
+  const rDiv=document.getElementById('ema-right');rDiv.innerHTML='';
+  lL.forEach(t=>{const el=document.createElement('div');el.className='match-item';el.textContent=t.af;el.dataset.k=t.en;el.onclick=()=>ePickM(el,'l');lDiv.appendChild(el);});
+  lR.forEach(t=>{const el=document.createElement('div');el.className='match-item';el.textContent=t.en;el.dataset.k=t.en;el.onclick=()=>ePickM(el,'r');rDiv.appendChild(el);});
+}
+function ePickM(el,side){
+  if(el.classList.contains('mok'))return;
+  if(side==='l'){document.querySelectorAll('#ema-left .match-item').forEach(e=>e.classList.remove('msel'));el.classList.add('msel');EM.selL=el;}
+  else{document.querySelectorAll('#ema-right .match-item').forEach(e=>e.classList.remove('msel'));el.classList.add('msel');EM.selR=el;}
+  if(EM.selL&&EM.selR){
+    if(EM.selL.dataset.k===EM.selR.dataset.k){
+      EM.selL.classList.remove('msel');EM.selR.classList.remove('msel');EM.selL.classList.add('mok');EM.selR.classList.add('mok');
+      EM.pairs++;EQ.correct++;eMark(EM.selL.dataset.k,true);
+      document.getElementById('ema-sc').textContent=EQ.correct+' gekoppel';
+      document.getElementById('ema-prog').style.width=Math.round(EM.pairs/EM.pool.length*100)+'%';
+      if(EM.pairs===EM.pool.length){document.getElementById('ema-next').style.display='inline-block';document.getElementById('ema-fb').innerHTML='<div class="fb ok"><div class="fb-title">Round complete!</div></div>';}
+    }else{
+      EM.selL.classList.add('mbad');EM.selR.classList.add('mbad');EQ.wrong++;EQ.missed.push(EM.selL.dataset.k);eMark(EM.selL.dataset.k,false);
+      const sL=EM.selL,sR=EM.selR;EM.selL=null;EM.selR=null;
+      setTimeout(()=>{sL.classList.remove('mbad','msel');sR.classList.remove('mbad','msel');},700);return;
+    }
+    EM.selL=null;EM.selR=null;
+  }
+}
+function eNextMatchRound(){EM.round++;if(EM.round>=3){eEndQuiz();return;}eLoadMR();}
+// END
+function eMark(k,ok){if(!ES.mastered[k])ES.mastered[k]=0;ES.mastered[k]=ok?Math.min(5,ES.mastered[k]+1):Math.max(0,ES.mastered[k]-1);}
+function eNorm(s){return s.toLowerCase().replace(/[^a-z0-9äëïöüáéíóúàèìòùâêîôû]/g,'').trim();}
+function eEndQuiz(){
+  const tot=EQ.correct+EQ.wrong,pct=tot>0?Math.round(EQ.correct/tot*100):0;
+  ES.sessions++;if(ES.best===null||pct>ES.best)ES.best=pct;ES.wrong=[...new Set(EQ.missed)];
+  const newB=eCheckBadges(pct);eSaveS();eShowResults(pct,tot,newB);
+}
+function eCheckBadges(pct){
+  const got=[],add=(id)=>{if(!ES.badges.includes(id)){ES.badges.push(id);got.push(id);}};
+  if(ES.sessions>=1)add('first');if(ES.streak>=3)add('streak3');if(ES.streak>=7)add('streak7');
+  if(pct===100)add('perfect');if(Object.keys(ES.mastered).filter(k=>ES.mastered[k]>=3).length>=10)add('master10');
+  if(ES.modes&&ES.modes.length>=4)add('allModes');return got;
+}
+function eShowResults(pct,tot,newB){
+  eShowQS('eqresults');
+  const grade=pct>=90?'Uitstekend!':pct>=75?'Baie goed!':pct>=60?'Goeie poging!':pct>=40?'Oefen meer!':'Hersien en probeer weer!';
+  document.getElementById('eres-pct').textContent=pct+'%';
+  document.getElementById('eres-grade').textContent=grade+' — '+EQ.correct+' korrek uit '+tot;
+  const mast=Object.keys(ES.mastered).filter(k=>ES.mastered[k]>=3).length;
+  document.getElementById('eres-bd').innerHTML='<div class="res-row"><span>Korrek</span><span class="rv-green">'+EQ.correct+'</span></div><div class="res-row"><span>Verkeerd</span><span class="rv-red">'+EQ.wrong+'</span></div><div class="res-row"><span>Sessies</span><span>'+ES.sessions+'</span></div><div class="res-row"><span>Dagreeks</span><span>'+ES.streak+' dag'+(ES.streak!==1?'e':'')+'</span></div><div class="res-row"><span>Terme bemeester</span><span>'+mast+' / '+ETERMS.length+'</span></div>';
+  const missed=document.getElementById('eres-missed');
+  if(EQ.missed.length>0){missed.innerHTML='<div class="missed-lbl">Terms to review ('+[...new Set(EQ.missed)].length+'):</div>'+[...new Set(EQ.missed)].map(m=>'<span class="missed-pill">'+m+'</span>').join('');}
+  else{missed.innerHTML='<div class="fb ok"><div class="fb-title">Geen gemiste terme — puik!</div></div>';}
+  const nb=document.getElementById('eres-newbadges');
+  if(newB.length>0){const defs=EBADGES.filter(b=>newB.includes(b.id));nb.innerHTML='<div class="fb ok"><div class="fb-title">New badge'+(defs.length>1?'s':'')+' earned!</div>'+defs.map(b=>b.icon+' '+b.label).join(' &nbsp; ')+'</div>';}else{nb.innerHTML='';}
+}
+function eRetryMissed(){if(ES.wrong.length<2){alert('Nog nie genoeg gemiste terme nie.');eGoHome();return;}document.getElementById('eq-topic').value='wrong';eStartQuiz();}
+function eGoHome(){eRefreshHome();eShowQS('eqhome');}
+
+// ══════════════════════════════════════
+//  LANG TOGGLE
+// ══════════════════════════════════════
+let langMode = 'bi'; // 'af' | 'bi' | 'en'
+
+function setLang(mode) {
+  langMode = mode;
+  // Update body class
+  document.body.classList.remove('lang-af','lang-bi','lang-en');
+  if (mode !== 'bi') document.body.classList.add('lang-' + mode);
+  // Update all toggle buttons (both glossaries share the same state)
+  ['h','e'].forEach(prefix => {
+    ['af','bi','en'].forEach(m => {
+      const btn = document.getElementById(prefix + 'lt-' + m);
+      if (btn) btn.classList.toggle('lon', m === mode);
+    });
+  });
+}
+
+// ══════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════
+buildHistGlossary();
+buildEmsGlossary();
+hRefreshHome();
+eRefreshHome();
+document.getElementById('egl-search').addEventListener('input', eglFilter);
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Backups created during editing
+*_backup.html
+*.bak
+*.tmp
+
+# Editor folders
+.vscode/
+.idea/
+
+# Node (if anyone runs a local dev server)
+node_modules/
